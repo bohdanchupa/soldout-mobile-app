@@ -46,8 +46,8 @@ jobs:
         run: |
           # Node 16 uses npm 8 which supports overrides properly
           # Add override to package.json to replace node-sass with sass everywhere
-          # Using sass@1.32.0 (compatible with Quasar v1 sass files)
-          node -e "const pkg=require('./package.json'); pkg.overrides={'node-sass':'npm:sass@1.32.0'}; require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2));"
+          # Using sass@latest (best compatibility with old and new syntax)
+          node -e "const pkg=require('./package.json'); pkg.overrides={'node-sass':'npm:sass@latest'}; require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2));"
           # Install dependencies - npm 8 will respect overrides
           npm install --legacy-peer-deps
           npm install -g cordova@10.0.0
@@ -176,8 +176,8 @@ jobs:
         run: |
           # Node 16 uses npm 8 which supports overrides properly
           # Add override to package.json to replace node-sass with sass everywhere
-          # Using sass@1.32.0 (compatible with Quasar v1 sass files)
-          node -e "const pkg=require('./package.json'); pkg.overrides={'node-sass':'npm:sass@1.32.0'}; require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2));"
+          # Using sass@latest (best compatibility with old and new syntax)
+          node -e "const pkg=require('./package.json'); pkg.overrides={'node-sass':'npm:sass@latest'}; require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2));"
           # Install dependencies - npm 8 will respect overrides
           npm install --legacy-peer-deps
           npm install -g cordova@10.0.0
