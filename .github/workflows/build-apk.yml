@@ -101,12 +101,18 @@ jobs:
           }
           EOF
 
+      - name: Setup Cordova Android Platform
+        run: |
+          cd src-cordova
+          cordova platform add android@9.1.0
+          cd ..
+
       - name: Build TEST APK
         run: |
           # Ensure TEST environment
           echo "Building TEST APK with TEST API endpoint"
           
-          # Build APK (Quasar handles Cordova setup)
+          # Build APK
           npx quasar build -m cordova -T android --debug
 
       - name: Rename TEST APK
@@ -203,6 +209,12 @@ jobs:
             }
           }
           EOF
+
+      - name: Setup Cordova Android Platform
+        run: |
+          cd src-cordova
+          cordova platform add android@9.1.0
+          cd ..
 
       - name: Switch to PROD environment
         run: |
