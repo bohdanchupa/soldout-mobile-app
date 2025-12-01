@@ -63,8 +63,19 @@ jobs:
           npm install
           cd ..
 
-      - name: Create config files
+      - name: Create config files and patch Quasar
         run: |
+          # Patch quasar.conf.js for Dart Sass compatibility with Quasar v1
+          # Use legacy API for better compatibility with old SASS syntax
+          node -e "
+          const fs = require('fs');
+          const conf = fs.readFileSync('quasar.conf.js', 'utf8');
+          const patched = conf.replace(
+            'loader.options.implementation = require(\\'sass\\')',
+            'loader.options.implementation = require(\\'sass\\'); loader.options.sassOptions = { silenceDeprecations: [\"slash-div\", \"import\", \"legacy-js-api\"] }'
+          );
+          fs.writeFileSync('quasar.conf.js', patched);
+          "
           # Create .postcssrc.js
           cat > .postcssrc.js << 'EOF'
           module.exports = {
@@ -182,8 +193,19 @@ jobs:
           npm install
           cd ..
 
-      - name: Create config files
+      - name: Create config files and patch Quasar
         run: |
+          # Patch quasar.conf.js for Dart Sass compatibility with Quasar v1
+          # Use legacy API for better compatibility with old SASS syntax
+          node -e "
+          const fs = require('fs');
+          const conf = fs.readFileSync('quasar.conf.js', 'utf8');
+          const patched = conf.replace(
+            'loader.options.implementation = require(\\'sass\\')',
+            'loader.options.implementation = require(\\'sass\\'); loader.options.sassOptions = { silenceDeprecations: [\"slash-div\", \"import\", \"legacy-js-api\"] }'
+          );
+          fs.writeFileSync('quasar.conf.js', patched);
+          "
           # Create .postcssrc.js
           cat > .postcssrc.js << 'EOF'
           module.exports = {
