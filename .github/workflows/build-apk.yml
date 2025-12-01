@@ -46,6 +46,10 @@ jobs:
         run: |
           npm install --ignore-scripts
           npm install -g cordova@10.0.0
+          # Install src-cordova dependencies
+          cd src-cordova
+          npm install
+          cd ..
 
       - name: Create config files
         run: |
@@ -155,6 +159,10 @@ jobs:
         run: |
           npm install --ignore-scripts
           npm install -g cordova@10.0.0
+          # Install src-cordova dependencies
+          cd src-cordova
+          npm install
+          cd ..
 
       - name: Create config files
         run: |
