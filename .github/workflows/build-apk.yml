@@ -106,14 +106,7 @@ jobs:
           # Ensure TEST environment
           echo "Building TEST APK with TEST API endpoint"
           
-          # Add Cordova Android platform if not exists
-          cd src-cordova
-          if [ ! -d "platforms/android" ]; then
-            cordova platform add android@9.1.0
-          fi
-          cd ..
-          
-          # Build APK
+          # Build APK (Quasar handles Cordova setup)
           npx quasar build -m cordova -T android --debug
 
       - name: Rename TEST APK
@@ -239,14 +232,7 @@ jobs:
         run: |
           echo "Building PROD APK with PROD API endpoint"
           
-          # Add Cordova Android platform if not exists
-          cd src-cordova
-          if [ ! -d "platforms/android" ]; then
-            cordova platform add android@9.1.0
-          fi
-          cd ..
-          
-          # Build APK
+          # Build APK (Quasar handles Cordova setup)
           npx quasar build -m cordova -T android --debug
 
       - name: Rename PROD APK
