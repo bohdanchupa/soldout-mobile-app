@@ -105,12 +105,6 @@ jobs:
           }
           EOF
 
-      - name: Setup Cordova Android Platform
-        run: |
-          cd src-cordova
-          cordova platform add android@9.1.0
-          cd ..
-
       - name: Build TEST APK
         run: |
           # Ensure TEST environment
@@ -217,12 +211,6 @@ jobs:
             }
           }
           EOF
-
-      - name: Setup Cordova Android Platform
-        run: |
-          cd src-cordova
-          cordova platform add android@9.1.0
-          cd ..
 
       - name: Switch to PROD environment
         run: |
