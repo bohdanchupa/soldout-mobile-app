@@ -102,8 +102,6 @@ jobs:
           EOF
 
       - name: Build TEST APK
-        env:
-          NODE_OPTIONS: --openssl-legacy-provider
         run: |
           # Ensure TEST environment
           echo "Building TEST APK with TEST API endpoint"
@@ -238,8 +236,6 @@ jobs:
           EOF
 
       - name: Build PROD APK
-        env:
-          NODE_OPTIONS: --openssl-legacy-provider
         run: |
           echo "Building PROD APK with PROD API endpoint"
           
