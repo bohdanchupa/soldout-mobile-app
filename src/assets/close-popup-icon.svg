@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <g id="close-popup-icon" transform="translate(-301 -199)">
+    <g id="Ellipse_223" data-name="Ellipse 223" transform="translate(301 199)" fill="none" stroke="#313d5f" stroke-width="1">
+      <circle cx="10" cy="10" r="10" stroke="none"/>
+      <circle cx="10" cy="10" r="9.5" fill="none"/>
+    </g>
+    <path id="Path_362" data-name="Path 362" d="M-6204.016,15044.5l8.459,8.459" transform="translate(6511 -14840)" fill="none" stroke="#313d5f" stroke-width="1"/>
+    <path id="Path_363" data-name="Path 363" d="M-6204.016,15044.5l8.459,8.459" transform="translate(15359.943 6408.516) rotate(90)" fill="none" stroke="#313d5f" stroke-width="1"/>
+  </g>
+</svg>

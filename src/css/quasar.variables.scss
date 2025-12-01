@@ -1,0 +1,43 @@
+// Quasar SCSS (& Sass) Variables
+// --------------------------------------------------
+// To customize the look and feel of this app, you can override
+// the Sass/SCSS variables found in Quasar's source Sass/SCSS files.
+
+// Check documentation for full list of Quasar variables
+
+// Your own variables (that are declared here) and Quasar's own
+// ones will be available out of the box in your .vue/.scss/.sass files
+
+// It's highly recommended to change the default colors
+// to match your app's branding.
+// Tip: Use the "Theme Builder" on Quasar's documentation website.
+
+$primary   : #ffffff;
+$secondary : #46C6FF;
+$accent    : #FD3363;
+
+$positive  : #66E8CD;
+$negative  : #FD3363;
+$info      : #31CCEC;
+$warning   : #F2C037;
+
+$bg-solid-color: #30395A;
+$shadow-color: #182331;
+$shadow-color-2: #24345F;
+$form-border-unactive: #151C39;
+$form-border-active: #46C6FF;
+$dark-text-color: #141B2C;
+
+$linear_bg: linear-gradient(to bottom, #28375D 0%, #222E4D 25%, #273557 75%, #2B3650 100%);
+$linear_bg_2: linear-gradient(to bottom, #2e406f 0%, #222e4d 26.6%, #212b44 80.3%, #2b3650 100%);
+$linear_bg_3: linear-gradient(to left, #556086 0%, #313d5f 100%);;
+$linear_submit-btn: linear-gradient(to right, #46C6FF, #4686FF);
+
+
+// Fonts mixin
+@mixin fnt($font-weight, $font-style) {
+  font-family: 'Gotham Pro';
+  font-weight: $font-weight;
+  font-style: $font-style;
+}
+

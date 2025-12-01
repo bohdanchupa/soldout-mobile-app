@@ -1,0 +1,26 @@
+FROM circleci/android:api-29-node
+
+USER root
+
+# Install Node 14
+RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g cordova@10.0.0
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install --ignore-scripts && \
+    rm -rf node_modules/node-sass
+
+# Copy project files  
+COPY . .
+
+# Accept licenses
+RUN yes | sdkmanager --licenses || true
+
+CMD ["bash"]
+

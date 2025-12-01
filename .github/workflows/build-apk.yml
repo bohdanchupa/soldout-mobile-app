@@ -1,0 +1,305 @@
+name: Build Android APKs
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build type (test, prod, or both)'
+        required: true
+        default: 'both'
+        type: choice
+        options:
+          - test
+          - prod
+          - both
+
+jobs:
+  build-test-apk:
+    name: Build TEST APK
+    runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || github.event.inputs.build_type == 'test' || github.event.inputs.build_type == 'both'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js 14
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+          cache: 'npm'
+
+      - name: Setup Java 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+
+      - name: Install dependencies
+        run: |
+          npm install --ignore-scripts
+          npm install -g cordova@10.0.0
+
+      - name: Create config files
+        run: |
+          # Create .postcssrc.js
+          cat > .postcssrc.js << 'EOF'
+          module.exports = {
+            plugins: [
+              require('autoprefixer')({
+                overrideBrowserslist: [
+                  'last 4 Chrome versions',
+                  'last 4 Firefox versions',
+                  'last 4 Edge versions',
+                  'last 4 Safari versions',
+                  'last 4 Android versions',
+                  'last 4 ChromeAndroid versions',
+                  'last 4 FirefoxAndroid versions',
+                  'last 4 iOS versions'
+                ]
+              })
+            ]
+          }
+          EOF
+
+          # Create .eslintrc.js
+          cat > .eslintrc.js << 'EOF'
+          module.exports = {
+            root: true,
+            parserOptions: {
+              parser: 'babel-eslint',
+              sourceType: 'module'
+            },
+            env: {
+              browser: true
+            },
+            extends: [
+              'plugin:vue/essential'
+            ],
+            plugins: [
+              'vue'
+            ],
+            globals: {
+              'ga': true,
+              'cordova': true,
+              '__statics': true,
+              'process': true
+            },
+            rules: {
+              'prefer-promise-reject-errors': 'off',
+              'no-unused-vars': 'off',
+              'no-console': 'off',
+              'no-debugger': 'off'
+            }
+          }
+          EOF
+
+      - name: Build TEST APK
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
+        run: |
+          # Ensure TEST environment
+          echo "Building TEST APK with TEST API endpoint"
+          
+          # Add Cordova Android platform if not exists
+          cd src-cordova
+          if [ ! -d "platforms/android" ]; then
+            cordova platform add android@9.1.0
+          fi
+          cd ..
+          
+          # Build APK
+          npx quasar build -m cordova -T android --debug
+
+      - name: Rename TEST APK
+        run: |
+          mkdir -p build-output
+          cp src-cordova/platforms/android/app/build/outputs/apk/debug/app-debug.apk build-output/soldout-test-debug.apk
+
+      - name: Upload TEST APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: soldout-test-apk
+          path: build-output/soldout-test-debug.apk
+          retention-days: 30
+
+  build-prod-apk:
+    name: Build PROD APK
+    runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || github.event.inputs.build_type == 'prod' || github.event.inputs.build_type == 'both'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js 14
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+          cache: 'npm'
+
+      - name: Setup Java 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+
+      - name: Install dependencies
+        run: |
+          npm install --ignore-scripts
+          npm install -g cordova@10.0.0
+
+      - name: Create config files
+        run: |
+          # Create .postcssrc.js
+          cat > .postcssrc.js << 'EOF'
+          module.exports = {
+            plugins: [
+              require('autoprefixer')({
+                overrideBrowserslist: [
+                  'last 4 Chrome versions',
+                  'last 4 Firefox versions',
+                  'last 4 Edge versions',
+                  'last 4 Safari versions',
+                  'last 4 Android versions',
+                  'last 4 ChromeAndroid versions',
+                  'last 4 FirefoxAndroid versions',
+                  'last 4 iOS versions'
+                ]
+              })
+            ]
+          }
+          EOF
+
+          # Create .eslintrc.js
+          cat > .eslintrc.js << 'EOF'
+          module.exports = {
+            root: true,
+            parserOptions: {
+              parser: 'babel-eslint',
+              sourceType: 'module'
+            },
+            env: {
+              browser: true
+            },
+            extends: [
+              'plugin:vue/essential'
+            ],
+            plugins: [
+              'vue'
+            ],
+            globals: {
+              'ga': true,
+              'cordova': true,
+              '__statics': true,
+              'process': true
+            },
+            rules: {
+              'prefer-promise-reject-errors': 'off',
+              'no-unused-vars': 'off',
+              'no-console': 'off',
+              'no-debugger': 'off'
+            }
+          }
+          EOF
+
+      - name: Switch to PROD environment
+        run: |
+          cat > src/api/endpoints.js << 'EOF'
+          // Production
+          const serviceUrl = 'https://z.soldout.com.ua'
+
+          export const serviceURL = serviceUrl
+
+          export const epToken = `${serviceUrl}/main-service/oauth/token`
+          export const epLogin = `${serviceUrl}/main-service/user/get`
+          export const epAllOrders = `${serviceUrl}/main-service/api/find-orders-by-organizator`
+          export const epAllTickets = `${serviceUrl}/main-service/api/find-tickets-by-organizator-short`
+          export const epSummOfPeriod = `${serviceUrl}/main-service/api/find-sum-by-organizator`
+          export const epEvents = `${serviceUrl}/main-service/api/find-bought-events-by-organizator`
+          export const epEventsToday = `${serviceUrl}/main-service/api/find-bought-events-and-info-by-organizator`
+          export const epEventsArchive = `${serviceUrl}/main-service/api/find-archive-events-by-organizator`
+          export const epEventInSum = `${serviceUrl}/main-service/api/find-sum-by-event`
+          export const epEventInCount = `${serviceUrl}/main-service/api/find-count-by-event`
+          export const epEventDetailsTable = `${serviceUrl}/main-service/api/find-color-price-by-event`
+          export const epEventDetailsTableForDate = `${serviceUrl}/main-service/api/find-color-price-by-event-and-date`
+          export const epStatisticInEntryScreen = `${serviceUrl}/main-service/api/find-events-by-organizator-main-short-info`
+          export const epEventSoldShortInfo = `${serviceUrl}/main-service/api/find-events-by-organizator-sold-short-info`
+          EOF
+
+      - name: Build PROD APK
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
+        run: |
+          echo "Building PROD APK with PROD API endpoint"
+          
+          # Add Cordova Android platform if not exists
+          cd src-cordova
+          if [ ! -d "platforms/android" ]; then
+            cordova platform add android@9.1.0
+          fi
+          cd ..
+          
+          # Build APK
+          npx quasar build -m cordova -T android --debug
+
+      - name: Rename PROD APK
+        run: |
+          mkdir -p build-output
+          cp src-cordova/platforms/android/app/build/outputs/apk/debug/app-debug.apk build-output/soldout-prod-debug.apk
+
+      - name: Upload PROD APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: soldout-prod-apk
+          path: build-output/soldout-prod-debug.apk
+          retention-days: 30
+
+  create-release:
+    name: Create Release with APKs
+    runs-on: ubuntu-latest
+    needs: [build-test-apk, build-prod-apk]
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    
+    steps:
+      - name: Download TEST APK
+        uses: actions/download-artifact@v3
+        with:
+          name: soldout-test-apk
+          path: apks
+
+      - name: Download PROD APK
+        uses: actions/download-artifact@v3
+        with:
+          name: soldout-prod-apk
+          path: apks
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: Build ${{ github.run_number }}
+          body: |
+            Automatic build from commit ${{ github.sha }}
+            
+            **Files:**
+            - `soldout-test-debug.apk` - TEST environment
+            - `soldout-prod-debug.apk` - PROD environment
+            
+            **Build Date:** ${{ github.event.head_commit.timestamp }}
+          files: |
+            apks/soldout-test-debug.apk
+            apks/soldout-prod-debug.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

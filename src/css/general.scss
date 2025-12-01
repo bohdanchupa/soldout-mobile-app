@@ -1,0 +1,54 @@
+.container {
+  padding: 10px 20px;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 25px;
+  background-color: #2B3650;
+  border-bottom: 1px solid #192541;
+  a {
+    display: inline-block;
+    vertical-align: middle;
+    text-decoration: none;
+    @include fnt(300, normal);
+    font-size: 18px;
+    line-height: 18px;
+    color: $primary;
+    padding-left: 20px;
+    position: relative;
+    &:before {
+      content: '';
+      display: inline-block;
+      vertical-align: middle;
+      width: 8px;
+      height: 8px;
+      border: 1px solid $primary;
+      border-top: none;
+      border-right: none;
+      transform-origin: 50% 50%;
+      transform: translate(0, -50%) rotate(45deg);
+      position: absolute;
+      top: 50%;
+      left: 0;
+    }
+    span {
+      display: inline-block;
+      font-size: 10px;
+      line-height: 10px;
+      &:nth-child(2) {
+        margin-left: 30px;
+      }
+      b {
+        font-weight: normal;
+      }
+    }
+  }
+}
+
+.mt-1 {
+  margin-top: 5px;
+}

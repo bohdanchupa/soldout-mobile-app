@@ -1,0 +1,44 @@
+FROM ubuntu:20.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    git \
+    unzip \
+    openjdk-8-jdk \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js 14
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
+    apt-get install -y nodejs
+
+# Install Gradle 6.7
+RUN wget https://services.gradle.org/distributions/gradle-6.7.1-bin.zip && \
+    unzip gradle-6.7.1-bin.zip -d /opt && \
+    rm gradle-6.7.1-bin.zip
+ENV PATH=$PATH:/opt/gradle-6.7.1/bin
+
+# Android SDK
+ENV ANDROID_HOME=/opt/android-sdk
+ENV ANDROID_SDK_ROOT=/opt/android-sdk
+RUN mkdir -p ${ANDROID_HOME}/cmdline-tools && \
+    cd ${ANDROID_HOME}/cmdline-tools && \
+    wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip && \
+    unzip commandlinetools-linux-8512546_latest.zip && \
+    mv cmdline-tools latest && \
+    rm commandlinetools-linux-8512546_latest.zip
+
+ENV PATH=$PATH:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/build-tools/30.0.3
+
+# Accept licenses and install required packages
+RUN yes | sdkmanager --licenses || true
+RUN sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
+
+# Install Cordova
+RUN npm install -g cordova@10.0.0
+
+WORKDIR /build
+
