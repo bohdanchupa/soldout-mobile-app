@@ -44,15 +44,16 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm install --ignore-scripts
+          # Install without node-sass
+          npm install --no-optional --ignore-scripts
           npm install -g cordova@10.0.0
-          # Force remove node-sass and ensure sass is used
-          npm uninstall node-sass || true
-          rm -rf node_modules/node-sass || true
-          npm install sass@1.26.5 sass-loader@7.3.1 --save-dev
+          # Completely remove any node-sass that snuck in
+          rm -rf node_modules/node-sass
+          # Install sass (Dart Sass) which is compatible
+          npm install sass@1.26.5 --save-dev --no-optional
           # Install src-cordova dependencies
           cd src-cordova
-          npm install
+          npm install --no-optional
           cd ..
 
       - name: Create config files
@@ -155,15 +156,16 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm install --ignore-scripts
+          # Install without node-sass
+          npm install --no-optional --ignore-scripts
           npm install -g cordova@10.0.0
-          # Force remove node-sass and ensure sass is used
-          npm uninstall node-sass || true
-          rm -rf node_modules/node-sass || true
-          npm install sass@1.26.5 sass-loader@7.3.1 --save-dev
+          # Completely remove any node-sass that snuck in
+          rm -rf node_modules/node-sass
+          # Install sass (Dart Sass) which is compatible
+          npm install sass@1.26.5 --save-dev --no-optional
           # Install src-cordova dependencies
           cd src-cordova
-          npm install
+          npm install --no-optional
           cd ..
 
       - name: Create config files
