@@ -44,13 +44,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          # Install without node-sass
-          npm install --no-optional --ignore-scripts
+          # Add override to package.json to replace node-sass with sass
+          node -e "const pkg=require('./package.json'); pkg.overrides={'node-sass':'npm:sass@1.26.5'}; require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2));"
+          # Install dependencies
+          npm install --no-optional --legacy-peer-deps
           npm install -g cordova@10.0.0
-          # Completely remove any node-sass that snuck in
-          rm -rf node_modules/node-sass
-          # Install sass (Dart Sass) which is compatible
-          npm install sass@1.26.5 --save-dev --no-optional
+          # Verify node-sass is NOT installed
+          if [ -d "node_modules/node-sass" ]; then echo "ERROR: node-sass found!"; exit 1; fi
           # Install src-cordova dependencies
           cd src-cordova
           npm install --no-optional
@@ -156,13 +156,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          # Install without node-sass
-          npm install --no-optional --ignore-scripts
+          # Add override to package.json to replace node-sass with sass
+          node -e "const pkg=require('./package.json'); pkg.overrides={'node-sass':'npm:sass@1.26.5'}; require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2));"
+          # Install dependencies
+          npm install --no-optional --legacy-peer-deps
           npm install -g cordova@10.0.0
-          # Completely remove any node-sass that snuck in
-          rm -rf node_modules/node-sass
-          # Install sass (Dart Sass) which is compatible
-          npm install sass@1.26.5 --save-dev --no-optional
+          # Verify node-sass is NOT installed
+          if [ -d "node_modules/node-sass" ]; then echo "ERROR: node-sass found!"; exit 1; fi
           # Install src-cordova dependencies
           cd src-cordova
           npm install --no-optional
