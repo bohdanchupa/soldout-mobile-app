@@ -46,6 +46,10 @@ jobs:
         run: |
           npm install --ignore-scripts
           npm install -g cordova@10.0.0
+          # Force remove node-sass and ensure sass is used
+          npm uninstall node-sass || true
+          rm -rf node_modules/node-sass || true
+          npm install sass@1.26.5 sass-loader@7.3.1 --save-dev
           # Install src-cordova dependencies
           cd src-cordova
           npm install
@@ -153,6 +157,10 @@ jobs:
         run: |
           npm install --ignore-scripts
           npm install -g cordova@10.0.0
+          # Force remove node-sass and ensure sass is used
+          npm uninstall node-sass || true
+          rm -rf node_modules/node-sass || true
+          npm install sass@1.26.5 sass-loader@7.3.1 --save-dev
           # Install src-cordova dependencies
           cd src-cordova
           npm install
