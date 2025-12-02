@@ -6,24 +6,18 @@
       </router-link>
       <div class="date-filter" v-if="showCalendarFilter" @click.prevent="showCalendarFilterPopup = true">
         <span v-if="dateFromFilter && dateToFilter">
-          {{dateFromFilter}} - {{dateToFilter}}
+          {{formatDisplayDate(dateFromFilter)}} — {{formatDisplayDate(dateToFilter)}}
         </span>
         <a href="#" class="callendar-btn"></a>
       </div>
     </q-header>
-    <div class="calendar-filter-popup" v-if="showCalendarFilterPopup">
-      <div class="calendar-filter-popup__window">
-        <i class="close-calendar-filer-popup" @click.prevent="showCalendarFilterPopup = false"></i>
-        <h3>Оберить проміжок:</h3>
-        <div>
-          <label for="date-from">Від: <span>{{dateFromFilter || '___-__-__'}}</span></label>
-          <label for="date-to">До: <span>{{dateToFilter || '___-__-__'}}</span></label>
-        </div>
-        <button @click.prevent="submitCalendarFilter">Підтвердити</button>
-        <input type="date" id="date-from" v-model="dateFromFilter">
-        <input type="date" id="date-to" v-model="dateToFilter">
-      </div>
-    </div>
+    <DateRangePicker
+      :show="showCalendarFilterPopup"
+      title="Оберіть проміжок:"
+      :initialRange="dateRange"
+      @submit="handleDateRangeSubmit"
+      @close="showCalendarFilterPopup = false"
+    />
     <div class="container">
       <form class="search">
         <div class="input-wrapper">
@@ -67,17 +61,20 @@
 
 <script>
 import { epEvents, epEventsArchive, serviceURL, epEventsToday } from '../api/endpoints'
+import DateRangePicker from '../components/DateRangePicker'
 
 export default {
   name: 'ListOfEvents',
+  components: {
+    DateRangePicker
+  },
   data () {
     return {
       filterString: '',
       events: [],
       showCalendarFilter: false,
       showCalendarFilterPopup: false,
-      dateFromFilter: null,
-      dateToFilter: null,
+      dateRange: null,
       pageKey: 0
     }
   },
@@ -85,6 +82,12 @@ export default {
     this.gettingData()
   },
   computed: {
+    dateFromFilter () {
+      return this.dateRange?.from || null
+    },
+    dateToFilter () {
+      return this.dateRange?.to || null
+    },
     routeTitle () {
       let title = ''
       switch (this.$route.params.listId) {
@@ -208,7 +211,13 @@ export default {
     resetFilterField () {
       this.filterString = ''
     },
-    submitCalendarFilter () {
+    formatDisplayDate (dateStr) {
+      if (!dateStr) return ''
+      const parts = dateStr.split('-')
+      return `${parts[2]}.${parts[1]}.${parts[0]}`
+    },
+    handleDateRangeSubmit (range) {
+      this.dateRange = range
       this.pageKey += 1
       this.showCalendarFilterPopup = false
       this.gettingData()
@@ -238,75 +247,6 @@ export default {
       background-image: url('../assets/calendar.svg');
       &:before {
         display: none;
-      }
-    }
-  }
-  .calendar-filter-popup {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 9999;
-    background-color: rgba(0,0,0,.7);
-    color: #fff;
-    &__window {
-      background-image: $linear_bg_3;
-      width: calc(100% - 30px);
-      padding: 15px;
-      border-radius: 15px;
-      .close-calendar-filer-popup {
-        display: block;
-        width: 20px;
-        height: 20px;
-        background-repeat: no-repeat;
-        background-position: 50% 50%;
-        background-size: contain;
-        background-image: url('../assets/close-popup-icon.svg');
-        margin-left: auto;
-      }
-      h3 {
-        font-size: 20px;
-        line-height: 20px;
-        text-align: center;
-        margin: 0 0 15px;
-        padding: 0;
-      }
-      label {
-        font-size: 16px;
-        span {
-          display: inline-block;
-          border: 1px solid #fff;
-          padding: 3px;
-          border-radius: 3px;
-        }
-      }
-      input[type="date"] {
-        display: block;
-        width: 0;
-        height: 0;
-        margin: 0;
-        padding: 0;
-        opacity: 0;
-      }
-      div {
-        display: flex;
-        justify-content: space-between;
-      }
-      button {
-        display: block;
-        border: none;
-        background-color: transparent;
-        outline: none;
-        @include fnt(normal, normal);
-        font-size: 12px;
-        color: $secondary;
-        padding: 0;
-        margin: 30px auto 0;
-        width: 150px;
       }
     }
   }
