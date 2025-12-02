@@ -1,10 +1,11 @@
 // Test
-const serviceUrl = 'https://z.test.soldout.com.ua'
+// const serviceUrl = 'https://z.test.soldout.com.ua'
 // Prod
-// const serviceUrl = 'https://z.soldout.com.ua'
+const serviceUrl = 'https://z.soldout.com.ua'
 
 export const serviceURL = serviceUrl
 
+// Using /main-service/ path
 export const epToken = `${serviceUrl}/main-service/oauth/token`
 export const epLogin = `${serviceUrl}/main-service/user/get`
 export const epAllOrders = `${serviceUrl}/main-service/api/find-orders-by-organizator`
