@@ -57,14 +57,11 @@ jobs:
           # Verify dist was created
           ls -la dist/spa/
 
-      - name: Setup Java 8 (required by Cordova Android 9.x)
+      - name: Setup Java 11 (compatible with both Android SDK tools and Cordova)
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '8'
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v2
+          java-version: '11'
 
       - name: Install Cordova
         run: npm install -g cordova@10.0.0
@@ -167,14 +164,11 @@ jobs:
           # Verify dist was created
           ls -la dist/spa/
 
-      - name: Setup Java 8 (required by Cordova Android 9.x)
+      - name: Setup Java 11 (compatible with both Android SDK tools and Cordova)
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '8'
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v2
+          java-version: '11'
 
       - name: Install Cordova
         run: npm install -g cordova@10.0.0
