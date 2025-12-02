@@ -78,10 +78,11 @@ jobs:
           cp -r dist/spa/* src-cordova/www/
           ls -la src-cordova/www/
 
-      - name: Build Android APK
+      - name: Build Android APK  
         run: |
           cd src-cordova
-          cordova platform add android@9.1.0
+          # Use Cordova Android 10.x which supports JDK 11+
+          cordova platform add android@10.1.0
           cordova build android --debug
           cd ..
 
@@ -185,10 +186,11 @@ jobs:
           cp -r dist/spa/* src-cordova/www/
           ls -la src-cordova/www/
 
-      - name: Build Android APK
+      - name: Build Android APK  
         run: |
           cd src-cordova
-          cordova platform add android@9.1.0
+          # Use Cordova Android 10.x which supports JDK 11+
+          cordova platform add android@10.1.0
           cordova build android --debug
           cd ..
 
