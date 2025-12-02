@@ -36,25 +36,11 @@ jobs:
           # Copy everything
           COPY . .
           
-          # Install WITHOUT build scripts
-          RUN npm install --ignore-scripts --legacy-peer-deps
-          
-          # Remove node-sass completely  
-          RUN rm -rf node_modules/node-sass
-          
-          # Install sass first (WITH --ignore-scripts to prevent any postinstall)
-          RUN npm install --no-save --ignore-scripts sass@1.26.5 sass-loader@7.3.1
-          
-          # Create shim: fake node-sass that exports sass
-          RUN mkdir -p node_modules/node-sass && \
-              echo '{"name":"node-sass","version":"4.13.0","main":"../sass/sass.dart.js"}' > node_modules/node-sass/package.json && \
-              echo 'module.exports = require("sass");' > node_modules/node-sass/index.js
+          # Install dependencies (EXACTLY like local Docker that works!)
+          RUN npm install --ignore-scripts && rm -rf node_modules/node-sass
           
           # Install src-cordova deps
           RUN cd src-cordova && npm install && cd ..
-          
-          # List to verify
-          RUN ls node_modules | grep -E "^sass"
           
           # Build command
           CMD ["sh", "-c", "npx quasar build"]
@@ -160,25 +146,11 @@ jobs:
           # Copy everything
           COPY . .
           
-          # Install WITHOUT build scripts
-          RUN npm install --ignore-scripts --legacy-peer-deps
-          
-          # Remove node-sass completely  
-          RUN rm -rf node_modules/node-sass
-          
-          # Install sass first (WITH --ignore-scripts to prevent any postinstall)
-          RUN npm install --no-save --ignore-scripts sass@1.26.5 sass-loader@7.3.1
-          
-          # Create shim: fake node-sass that exports sass
-          RUN mkdir -p node_modules/node-sass && \
-              echo '{"name":"node-sass","version":"4.13.0","main":"../sass/sass.dart.js"}' > node_modules/node-sass/package.json && \
-              echo 'module.exports = require("sass");' > node_modules/node-sass/index.js
+          # Install dependencies (EXACTLY like local Docker that works!)
+          RUN npm install --ignore-scripts && rm -rf node_modules/node-sass
           
           # Install src-cordova deps
           RUN cd src-cordova && npm install && cd ..
-          
-          # List to verify
-          RUN ls node_modules | grep -E "^sass"
           
           # Build command
           CMD ["sh", "-c", "npx quasar build"]
