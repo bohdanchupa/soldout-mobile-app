@@ -39,11 +39,16 @@ jobs:
           # Install WITHOUT build scripts
           RUN npm install --ignore-scripts --legacy-peer-deps
           
-          # Remove node-sass completely
+          # Remove node-sass completely  
           RUN rm -rf node_modules/node-sass
           
-          # Install sass + sass-loader (compatible versions)
-          RUN npm install --no-save sass@1.26.5 sass-loader@7.3.1
+          # Install sass first (WITH --ignore-scripts to prevent any postinstall)
+          RUN npm install --no-save --ignore-scripts sass@1.26.5 sass-loader@7.3.1
+          
+          # Create shim: fake node-sass that exports sass
+          RUN mkdir -p node_modules/node-sass && \
+              echo '{"name":"node-sass","version":"4.13.0","main":"../sass/sass.dart.js"}' > node_modules/node-sass/package.json && \
+              echo 'module.exports = require("sass");' > node_modules/node-sass/index.js
           
           # Install src-cordova deps
           RUN cd src-cordova && npm install && cd ..
@@ -158,11 +163,16 @@ jobs:
           # Install WITHOUT build scripts
           RUN npm install --ignore-scripts --legacy-peer-deps
           
-          # Remove node-sass completely
+          # Remove node-sass completely  
           RUN rm -rf node_modules/node-sass
           
-          # Install sass + sass-loader (compatible versions)
-          RUN npm install --no-save sass@1.26.5 sass-loader@7.3.1
+          # Install sass first (WITH --ignore-scripts to prevent any postinstall)
+          RUN npm install --no-save --ignore-scripts sass@1.26.5 sass-loader@7.3.1
+          
+          # Create shim: fake node-sass that exports sass
+          RUN mkdir -p node_modules/node-sass && \
+              echo '{"name":"node-sass","version":"4.13.0","main":"../sass/sass.dart.js"}' > node_modules/node-sass/package.json && \
+              echo 'module.exports = require("sass");' > node_modules/node-sass/index.js
           
           # Install src-cordova deps
           RUN cd src-cordova && npm install && cd ..
