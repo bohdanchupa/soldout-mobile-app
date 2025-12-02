@@ -1,0 +1,168 @@
+name: Build APKs with Docker
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build type'
+        required: true
+        default: 'both'
+        type: choice
+        options:
+          - test
+          - prod
+          - both
+
+jobs:
+  build-test-apk:
+    name: Build TEST APK
+    runs-on: ubuntu-latest
+    if: github.event.inputs.build_type == 'test' || github.event.inputs.build_type == 'both'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image with Node 14
+        run: |
+          docker build -t soldout-builder -f - . << 'DOCKERFILE'
+          FROM node:14-alpine
+          WORKDIR /app
+          RUN apk add --no-cache python3 make g++
+          COPY package.json package-lock.json ./
+          RUN npm install --ignore-scripts
+          RUN rm -rf node_modules/node-sass
+          COPY . .
+          DOCKERFILE
+
+      - name: Build web assets in Docker
+        run: |
+          docker run --rm -v $(pwd)/dist:/app/dist soldout-builder sh -c "npx quasar build"
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+
+      - name: Install Cordova
+        run: npm install -g cordova@10.0.0
+
+      - name: Copy web assets to Cordova
+        run: |
+          mkdir -p src-cordova/www
+          cp -r dist/spa/* src-cordova/www/
+
+      - name: Build Android APK
+        run: |
+          cd src-cordova
+          cordova platform add android@9.1.0
+          cordova build android --debug
+          cd ..
+
+      - name: Rename TEST APK
+        run: |
+          mkdir -p build-output
+          cp src-cordova/platforms/android/app/build/outputs/apk/debug/app-debug.apk build-output/soldout-test-debug.apk
+
+      - name: Upload TEST APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: soldout-test-apk
+          path: build-output/soldout-test-debug.apk
+          retention-days: 30
+
+  build-prod-apk:
+    name: Build PROD APK
+    runs-on: ubuntu-latest
+    if: github.event.inputs.build_type == 'prod' || github.event.inputs.build_type == 'both'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Switch to PROD environment
+        run: |
+          cat > src/api/endpoints.js << 'EOF'
+          // Production
+          const serviceUrl = 'https://z.soldout.com.ua'
+
+          export const serviceURL = serviceUrl
+
+          export const epToken = `${serviceUrl}/main-service/oauth/token`
+          export const epLogin = `${serviceUrl}/main-service/user/get`
+          export const epAllOrders = `${serviceUrl}/main-service/api/find-orders-by-organizator`
+          export const epAllTickets = `${serviceUrl}/main-service/api/find-tickets-by-organizator-short`
+          export const epSummOfPeriod = `${serviceUrl}/main-service/api/find-sum-by-organizator`
+          export const epEvents = `${serviceUrl}/main-service/api/find-bought-events-by-organizator`
+          export const epEventsToday = `${serviceUrl}/main-service/api/find-bought-events-and-info-by-organizator`
+          export const epEventsArchive = `${serviceUrl}/main-service/api/find-archive-events-by-organizator`
+          export const epEventInSum = `${serviceUrl}/main-service/api/find-sum-by-event`
+          export const epEventInCount = `${serviceUrl}/main-service/api/find-count-by-event`
+          export const epEventDetailsTable = `${serviceUrl}/main-service/api/find-color-price-by-event`
+          export const epEventDetailsTableForDate = `${serviceUrl}/main-service/api/find-color-price-by-event-and-date`
+          export const epStatisticInEntryScreen = `${serviceUrl}/main-service/api/find-events-by-organizator-main-short-info`
+          export const epEventSoldShortInfo = `${serviceUrl}/main-service/api/find-events-by-organizator-sold-short-info`
+          EOF
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image with Node 14
+        run: |
+          docker build -t soldout-builder -f - . << 'DOCKERFILE'
+          FROM node:14-alpine
+          WORKDIR /app
+          RUN apk add --no-cache python3 make g++
+          COPY package.json package-lock.json ./
+          RUN npm install --ignore-scripts
+          RUN rm -rf node_modules/node-sass
+          COPY . .
+          DOCKERFILE
+
+      - name: Build web assets in Docker
+        run: |
+          docker run --rm -v $(pwd)/dist:/app/dist soldout-builder sh -c "npx quasar build"
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+
+      - name: Install Cordova
+        run: npm install -g cordova@10.0.0
+
+      - name: Copy web assets to Cordova
+        run: |
+          mkdir -p src-cordova/www
+          cp -r dist/spa/* src-cordova/www/
+
+      - name: Build Android APK
+        run: |
+          cd src-cordova
+          cordova platform add android@9.1.0
+          cordova build android --debug
+          cd ..
+
+      - name: Rename PROD APK
+        run: |
+          mkdir -p build-output
+          cp src-cordova/platforms/android/app/build/outputs/apk/debug/app-debug.apk build-output/soldout-prod-debug.apk
+
+      - name: Upload PROD APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: soldout-prod-apk
+          path: build-output/soldout-prod-debug.apk
+          retention-days: 30
+
