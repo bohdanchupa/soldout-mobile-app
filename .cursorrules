@@ -262,6 +262,29 @@ cd src-cordova && cordova prepare ios
 **Problem**: "Signing requires a development team"
 **Solution**: Open Xcode → Signing & Capabilities → Select Team (Apple ID)
 
+### Issue: Xcode "Untrusted Developer" на iPhone
+**Problem**: App не запускається, показує "Untrusted Developer"
+**Solution**: 
+1. iPhone → Settings → General → VPN & Device Management
+2. Натисніть на ваш Apple ID (Developer App)
+3. Trust
+
+### Issue: Xcode не бачить iPhone
+**Problem**: iPhone не з'являється в списку пристроїв
+**Solutions**:
+1. Перевірте USB кабель (використовуйте оригінальний)
+2. Розблокуйте iPhone і натисніть "Trust This Computer"
+3. Перезапустіть Xcode
+4. Window → Devices and Simulators → перевірте статус
+
+### Issue: "Could not launch Soldout Event" в Xcode
+**Problem**: Build успішний але app не запускається
+**Solutions**:
+1. Видаліть app з iPhone вручну
+2. Xcode → Product → Clean Build Folder (⌘⇧K)
+3. Rebuild and Run
+4. Перевірте Safari Web Inspector на JavaScript errors
+
 ## Development Workflow
 
 ### 1. Local Development (Web)
@@ -270,17 +293,65 @@ npm run dev
 # Opens http://localhost:4200
 ```
 
-### 2. iOS Development
+### 2. iOS Development with Xcode
+
+**КРИТИЧНО**: Після КОЖНОЇ зміни коду треба тестувати на фізичному iPhone!
+
+#### Крок 1: Збірка Web Assets
 ```bash
-# Build web assets
 ./rebuild-ios.sh
-
-# Open in Xcode
-open src-cordova/platforms/ios/Soldout\ Event.xcworkspace
-
-# Clean Build Folder (Cmd+Shift+K)
-# Run (Cmd+R)
 ```
+Цей скрипт:
+- Збирає web assets в Docker (Node 14 + sass@1.23.0)
+- Копіює в `src-cordova/www/`
+- Запускає `cordova prepare ios`
+- Інжектує `cordova.js` в index.html
+
+#### Крок 2: Відкриття в Xcode
+```bash
+open src-cordova/platforms/ios/Soldout\ Event.xcworkspace
+```
+⚠️ Завжди відкривайте `.xcworkspace`, НЕ `.xcodeproj`!
+
+#### Крок 3: Підготовка до Запуску
+1. **Під'єднайте iPhone** до Mac через USB
+2. **Розблокуйте iPhone** і натисніть "Trust This Computer"
+3. **Виберіть пристрій** у Xcode: меню вгорі → виберіть ваш iPhone замість "Any iOS Device"
+4. **Перевірте Signing**: 
+   - Signing & Capabilities → Team: [Ваш Apple ID]
+   - Якщо помилка → розділ "Troubleshooting" нижче
+
+#### Крок 4: Збірка і Запуск
+1. **Clean Build Folder**: `Product → Clean Build Folder` (⌘⇧K)
+2. **Build & Run**: `Product → Run` (⌘R)
+3. **Перший запуск на новому пристрої**:
+   - iPhone покаже: "Untrusted Developer"
+   - Йдіть: Settings → General → VPN & Device Management
+   - Натисніть на ваш Apple ID → Trust
+
+#### Крок 5: Налагодження
+```bash
+# Відкрийте Safari Web Inspector для живих логів
+Safari → Develop → [Ваш iPhone] → Soldout Event
+```
+Тут ви побачите:
+- `console.log()` з додатку
+- Network requests (API calls)
+- JavaScript errors
+- Cordova deviceready events
+
+#### Тестування Після Змін
+✅ **Обов'язково перевіряйте на iPhone**:
+- Login/Logout flow
+- Remember Me checkbox
+- API requests (CORS, 403, network errors)
+- Cordova plugins (HTTP, deviceready)
+- UI/UX (transitions, errors, loading states)
+
+🚫 **НЕ покладайтеся лише на**:
+- Web версію (localhost:4200) - не показує Cordova issues
+- iOS Simulator - не показує CORS issues
+- Xcode logs - використовуйте Safari Web Inspector
 
 ### 3. Debugging iOS
 ```bash
@@ -295,6 +366,28 @@ open src-cordova/platforms/ios/Soldout\ Event.xcworkspace
 ./test-cors.sh
 # Shows if ZUUL CORS is configured correctly
 ```
+
+### 5. Швидкий Тест на iPhone (після кожної зміни)
+```bash
+# 1. Rebuild
+./rebuild-ios.sh
+
+# 2. Open Xcode
+open src-cordova/platforms/ios/Soldout\ Event.xcworkspace
+
+# 3. У Xcode: ⌘⇧K (Clean) → ⌘R (Run)
+
+# 4. Safari Web Inspector
+# Safari → Develop → [iPhone] → Soldout Event
+```
+
+**Що перевірити** (залежно від типу зміни):
+- ✅ Cordova deviceready event fired
+- ✅ Login працює (перевір Network tab для CORS)
+- ✅ Remember Me checkbox працює
+- ✅ Logout очищує всі дані
+- ✅ UI responsive і transitions плавні
+- ✅ Немає JavaScript errors в Console
 
 ## Code Quality
 
@@ -424,6 +517,34 @@ When helping with this project:
 8. **CORS issues**: Check if `allow-credentials: true` is set in ZUUL
 9. **Cordova plugins**: Ensure deviceready fires before using plugins
 10. **Clean Build** in Xcode after every code change for iOS
+
+### 🔴 ВАЖЛИВЕ ПРАВИЛО: Тестування на iPhone
+
+**ПІСЛЯ КОЖНОЇ ЗМІНИ КОДУ** (особливо у файлах `src/`, `src-cordova/config.xml`):
+
+1. Завжди пропонуй користувачу:
+   ```
+   📱 Для тестування змін на iPhone:
+   1. Запустіть: ./rebuild-ios.sh
+   2. Відкрийте: src-cordova/platforms/ios/Soldout Event.xcworkspace
+   3. У Xcode: Clean Build Folder (⌘⇧K) → Run (⌘R)
+   4. Перевірте в Safari Web Inspector: Develop → iPhone → Soldout Event
+   ```
+
+2. Нагадуй про це навіть для невеликих змін (стилі, текст, логіка)
+
+3. Якщо зміна стосується:
+   - **API/Axios**: обов'язково перевір CORS на реальному пристрої
+   - **LocalStorage/Vuex**: перевір на iPhone (clear app data між тестами)
+   - **Login/Logout**: тестуй повний flow на пристрої
+   - **UI/Стилі**: переконайся що responsive і transitions працюють
+
+4. **НЕ припускай** що зміна працює без тестування на фізичному iPhone!
+
+5. Якщо користувач повідомляє про проблему - одразу питай:
+   - Тестували на iPhone чи в браузері?
+   - Що показує Safari Web Inspector Console?
+   - ЯкіNetwork requests у Safari Web Inspector?
 
 ## Quick Reference
 
