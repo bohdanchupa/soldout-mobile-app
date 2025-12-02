@@ -101,6 +101,10 @@ module.exports = function (ctx) {
               if (loader.loader && loader.loader.includes('sass-loader')) {
                 loader.options = loader.options || {}
                 loader.options.implementation = require('sass')
+                // Silence Dart Sass deprecation warnings for old Quasar v1 syntax
+                loader.options.sassOptions = {
+                  silenceDeprecations: ['slash-div']
+                }
               }
             })
           }

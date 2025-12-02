@@ -23,24 +23,48 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Build Docker image with Node 14
+      - name: Build web assets in Docker (Node 14 + Sass configured)
         run: |
-          docker build -t soldout-builder -f - . << 'DOCKERFILE'
+          # Create Dockerfile with proper sass setup
+          cat > Dockerfile.build << 'EOF'
           FROM node:14-alpine
           WORKDIR /app
-          RUN apk add --no-cache python3 make g++
-          COPY package.json package-lock.json ./
-          RUN npm install --ignore-scripts
-          RUN rm -rf node_modules/node-sass
+          
+          # Install build tools
+          RUN apk add --no-cache python3 make g++ git
+          
+          # Copy everything
           COPY . .
-          DOCKERFILE
-
-      - name: Build web assets in Docker
-        run: |
-          docker run --rm -v $(pwd)/dist:/app/dist soldout-builder sh -c "npx quasar build"
+          
+          # Install WITHOUT build scripts
+          RUN npm install --ignore-scripts --legacy-peer-deps
+          
+          # Remove node-sass completely
+          RUN rm -rf node_modules/node-sass
+          
+          # Install sass + sass-loader (compatible versions)
+          RUN npm install --no-save sass@1.26.5 sass-loader@7.3.1
+          
+          # Install src-cordova deps
+          RUN cd src-cordova && npm install && cd ..
+          
+          # List to verify
+          RUN ls node_modules | grep -E "^sass"
+          
+          # Build command
+          CMD ["sh", "-c", "npx quasar build"]
+          EOF
+          
+          # Build Docker image
+          docker build -f Dockerfile.build -t soldout-builder .
+          
+          # Run build and extract dist folder
+          docker run --name temp-builder soldout-builder
+          docker cp temp-builder:/app/dist ./dist
+          docker rm temp-builder
+          
+          # Verify dist was created
+          ls -la dist/spa/
 
       - name: Setup Java 17
         uses: actions/setup-java@v3
@@ -54,10 +78,17 @@ jobs:
       - name: Install Cordova
         run: npm install -g cordova@10.0.0
 
-      - name: Copy web assets to Cordova
+      - name: Install src-cordova dependencies
+        run: |
+          cd src-cordova
+          npm install
+          cd ..
+
+      - name: Copy web assets to Cordova www
         run: |
           mkdir -p src-cordova/www
           cp -r dist/spa/* src-cordova/www/
+          ls -la src-cordova/www/
 
       - name: Build Android APK
         run: |
@@ -66,7 +97,7 @@ jobs:
           cordova build android --debug
           cd ..
 
-      - name: Rename TEST APK
+      - name: Rename and upload TEST APK
         run: |
           mkdir -p build-output
           cp src-cordova/platforms/android/app/build/outputs/apk/debug/app-debug.apk build-output/soldout-test-debug.apk
@@ -111,24 +142,48 @@ jobs:
           export const epEventSoldShortInfo = `${serviceUrl}/main-service/api/find-events-by-organizator-sold-short-info`
           EOF
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Build Docker image with Node 14
+      - name: Build web assets in Docker (Node 14 + Sass configured)
         run: |
-          docker build -t soldout-builder -f - . << 'DOCKERFILE'
+          # Create Dockerfile with proper sass setup
+          cat > Dockerfile.build << 'EOF'
           FROM node:14-alpine
           WORKDIR /app
-          RUN apk add --no-cache python3 make g++
-          COPY package.json package-lock.json ./
-          RUN npm install --ignore-scripts
-          RUN rm -rf node_modules/node-sass
+          
+          # Install build tools
+          RUN apk add --no-cache python3 make g++ git
+          
+          # Copy everything
           COPY . .
-          DOCKERFILE
-
-      - name: Build web assets in Docker
-        run: |
-          docker run --rm -v $(pwd)/dist:/app/dist soldout-builder sh -c "npx quasar build"
+          
+          # Install WITHOUT build scripts
+          RUN npm install --ignore-scripts --legacy-peer-deps
+          
+          # Remove node-sass completely
+          RUN rm -rf node_modules/node-sass
+          
+          # Install sass + sass-loader (compatible versions)
+          RUN npm install --no-save sass@1.26.5 sass-loader@7.3.1
+          
+          # Install src-cordova deps
+          RUN cd src-cordova && npm install && cd ..
+          
+          # List to verify
+          RUN ls node_modules | grep -E "^sass"
+          
+          # Build command
+          CMD ["sh", "-c", "npx quasar build"]
+          EOF
+          
+          # Build Docker image
+          docker build -f Dockerfile.build -t soldout-builder .
+          
+          # Run build and extract dist folder
+          docker run --name temp-builder soldout-builder
+          docker cp temp-builder:/app/dist ./dist
+          docker rm temp-builder
+          
+          # Verify dist was created
+          ls -la dist/spa/
 
       - name: Setup Java 17
         uses: actions/setup-java@v3
@@ -142,10 +197,17 @@ jobs:
       - name: Install Cordova
         run: npm install -g cordova@10.0.0
 
-      - name: Copy web assets to Cordova
+      - name: Install src-cordova dependencies
+        run: |
+          cd src-cordova
+          npm install
+          cd ..
+
+      - name: Copy web assets to Cordova www
         run: |
           mkdir -p src-cordova/www
           cp -r dist/spa/* src-cordova/www/
+          ls -la src-cordova/www/
 
       - name: Build Android APK
         run: |
@@ -154,7 +216,7 @@ jobs:
           cordova build android --debug
           cd ..
 
-      - name: Rename PROD APK
+      - name: Rename and upload PROD APK
         run: |
           mkdir -p build-output
           cp src-cordova/platforms/android/app/build/outputs/apk/debug/app-debug.apk build-output/soldout-prod-debug.apk
@@ -165,4 +227,3 @@ jobs:
           name: soldout-prod-apk
           path: build-output/soldout-prod-debug.apk
           retention-days: 30
-
