@@ -44,20 +44,30 @@ jobs:
 
       - name: Install dependencies
         run: |
-          # Node 16 uses npm 8 which supports overrides properly
-          # Add override to package.json to replace node-sass with sass everywhere
-          # Using sass@latest (best compatibility with old and new syntax)
-          node -e "const pkg=require('./package.json'); pkg.overrides={'node-sass':'npm:sass@latest'}; require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2));"
-          # Install dependencies - npm 8 will respect overrides
-          npm install --legacy-peer-deps
+          # NUCLEAR OPTION: Install with --ignore-scripts, then forcefully replace node-sass
+          npm install --legacy-peer-deps --ignore-scripts
           npm install -g cordova@10.0.0
-          # Verify node-sass is NOT installed (should be replaced by sass)
-          if [ -d "node_modules/node-sass" ]; then 
-            echo "ERROR: node-sass found despite override!"; 
-            ls -la node_modules/node-sass;
-            exit 1; 
-          fi
-          echo "✓ Success: node-sass properly replaced with sass"
+          
+          # Forcefully remove node-sass and install sass
+          rm -rf node_modules/node-sass
+          npm install sass@1.32.0 --save-dev --no-save
+          
+          # Create a fake node-sass module that redirects to sass
+          mkdir -p node_modules/node-sass
+          cat > node_modules/node-sass/package.json << 'PKGEOF'
+          {
+            "name": "node-sass",
+            "version": "4.13.0",
+            "main": "../sass/sass.node.js"
+          }
+          PKGEOF
+          
+          cat > node_modules/node-sass/index.js << 'INDEXEOF'
+          module.exports = require('sass');
+          INDEXEOF
+          
+          echo "✓ node-sass redirected to sass"
+          
           # Install src-cordova dependencies
           cd src-cordova
           npm install
@@ -174,20 +184,30 @@ jobs:
 
       - name: Install dependencies
         run: |
-          # Node 16 uses npm 8 which supports overrides properly
-          # Add override to package.json to replace node-sass with sass everywhere
-          # Using sass@latest (best compatibility with old and new syntax)
-          node -e "const pkg=require('./package.json'); pkg.overrides={'node-sass':'npm:sass@latest'}; require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2));"
-          # Install dependencies - npm 8 will respect overrides
-          npm install --legacy-peer-deps
+          # NUCLEAR OPTION: Install with --ignore-scripts, then forcefully replace node-sass
+          npm install --legacy-peer-deps --ignore-scripts
           npm install -g cordova@10.0.0
-          # Verify node-sass is NOT installed (should be replaced by sass)
-          if [ -d "node_modules/node-sass" ]; then 
-            echo "ERROR: node-sass found despite override!"; 
-            ls -la node_modules/node-sass;
-            exit 1; 
-          fi
-          echo "✓ Success: node-sass properly replaced with sass"
+          
+          # Forcefully remove node-sass and install sass
+          rm -rf node_modules/node-sass
+          npm install sass@1.32.0 --save-dev --no-save
+          
+          # Create a fake node-sass module that redirects to sass
+          mkdir -p node_modules/node-sass
+          cat > node_modules/node-sass/package.json << 'PKGEOF'
+          {
+            "name": "node-sass",
+            "version": "4.13.0",
+            "main": "../sass/sass.node.js"
+          }
+          PKGEOF
+          
+          cat > node_modules/node-sass/index.js << 'INDEXEOF'
+          module.exports = require('sass');
+          INDEXEOF
+          
+          echo "✓ node-sass redirected to sass"
+          
           # Install src-cordova dependencies
           cd src-cordova
           npm install
