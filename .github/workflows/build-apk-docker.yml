@@ -81,8 +81,8 @@ jobs:
       - name: Build Android APK  
         run: |
           cd src-cordova
-          # Use Cordova Android 11.x (latest, supports Gradle 9.x + JDK 17)
-          cordova platform add android@11.0.0
+          # Use Cordova Android 12.x (latest, should support Gradle 9.x)
+          cordova platform add android@latest
           cordova build android --debug
           cd ..
 
@@ -189,8 +189,8 @@ jobs:
       - name: Build Android APK  
         run: |
           cd src-cordova
-          # Use Cordova Android 11.x (latest, supports Gradle 9.x + JDK 17)
-          cordova platform add android@11.0.0
+          # Use Cordova Android 12.x (latest, should support Gradle 9.x)
+          cordova platform add android@latest
           cordova build android --debug
           cd ..
 
