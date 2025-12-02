@@ -41,8 +41,19 @@ export default {
   },
   methods: {
     logout () {
+      console.log('🚪 Logging out...')
+      
+      // Clear Vuex store
       this.$store.dispatch('logout')
+      
+      // Clear ALL localStorage data
       this.$q.localStorage.remove('userData')
+      this.$q.localStorage.remove('savedAuth')
+      this.$q.localStorage.remove('rememberMe')
+      
+      console.log('✓ All saved data cleared')
+      
+      // Redirect to login
       this.$router.replace('/')
     }
   }

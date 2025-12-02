@@ -14,6 +14,7 @@ export const logout = (state) => {
   state.user.mail = null
   state.user.phone = null
   state.user.logined = false
+  state.error = null
 }
 
 export const showDetails = (state, { show }) => {
