@@ -57,11 +57,11 @@ jobs:
           # Verify dist was created
           ls -la dist/spa/
 
-      - name: Setup Java 17
+      - name: Setup Java 8 (required by Cordova Android 9.x)
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '8'
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
@@ -167,11 +167,11 @@ jobs:
           # Verify dist was created
           ls -la dist/spa/
 
-      - name: Setup Java 17
+      - name: Setup Java 8 (required by Cordova Android 9.x)
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '8'
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
