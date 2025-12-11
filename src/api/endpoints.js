@@ -1,7 +1,7 @@
 // Test
-// const serviceUrl = 'https://z.test.soldout.com.ua'
+const serviceUrl = 'https://z.test.soldout.com.ua'
 // Prod
-const serviceUrl = 'https://z.soldout.com.ua'
+// const serviceUrl = 'https://z.soldout.com.ua'
 
 export const serviceURL = serviceUrl
 

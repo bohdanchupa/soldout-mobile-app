@@ -6,7 +6,9 @@ echo "🔨 Rebuilding iOS App with Cordova Support"
 echo "=========================================="
 echo ""
 
-cd "/Users/Bohdan_Chupa/Desktop/Personal/FORK/Додаток орга/org-mobile-app"
+# Get the directory where the script is located
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "$SCRIPT_DIR"
 
 echo "📦 Step 1: Building web assets in Docker..."
 docker exec soldout-app-container sh -c "npx quasar build" > /dev/null 2>&1

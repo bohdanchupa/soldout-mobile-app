@@ -41,11 +41,9 @@
 
 <script>
 /*
-* d.crosspost@gmail.com
-* aXLYjbfTNNN_soldout584
-*
-* tomkevicho99@ukr.net
-* Test123Test123
+* Основні credentials (PROD):
+* romanchupa1@gmail.com
+* sJAk969beho_
 * */
 
 export default {
@@ -93,8 +91,8 @@ export default {
       console.log('✓ Loaded saved credentials')
     } else {
       // Use default PROD credentials for first time
-      this.email = 'y.oliinyk@stageshow.com.ua'
-      this.pass = 'dXrEj0RqjfY_'
+      this.email = 'romanchupa1@gmail.com'
+      this.pass = 'sJAk969beho_'
       console.log('📝 Using default credentials')
     }
 

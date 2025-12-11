@@ -20,7 +20,7 @@
         <div>
           <h2>{{allTicketCount}}</h2>
           <span class="divider-4"></span>
-          <h4>Квиктів</h4>
+          <h4>Квитків</h4>
         </div>
       </div>
     </div>
