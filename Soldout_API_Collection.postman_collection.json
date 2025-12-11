@@ -1,0 +1,717 @@
+{
+	"info": {
+		"_postman_id": "soldout-api-collection",
+		"name": "Soldout Statistics API",
+		"description": "Повна колекція API ендпоінтів для Soldout Statistics App\n\n**Автентифікація:**\n- Використовується OAuth 2.0 Password Grant\n- Токен автоматично отримується через Pre-request Script\n- Всі запити використовують Bearer token\n\n**Важливі заголовки:**\n- `Authorization: Bearer {token}`\n- `X-SOLDOUT-STATISTIC-APP-ACCESS: b9011a8e5cdb1b62ec5513e2303c2b78`\n\n**Тестові облікові дані:**\n- Email: d.crosspost@gmail.com\n- Password: aXLYjbfTNNN_soldout584",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Автоматичне отримання токену перед кожним запитом",
+					"// Перевіряємо чи є валідний токен",
+					"const tokenExpiry = pm.environment.get('token_expiry');",
+					"const now = new Date().getTime();",
+					"",
+					"if (!pm.environment.get('access_token') || !tokenExpiry || now >= tokenExpiry) {",
+					"    // Токен відсутній або прострочений - отримуємо новий",
+					"    const username = pm.environment.get('username') || 'd.crosspost@gmail.com';",
+					"    const password = pm.environment.get('password') || 'aXLYjbfTNNN_soldout584';",
+					"    ",
+					"    pm.sendRequest({",
+					"        url: pm.environment.get('base_url') + '/main-service/oauth/token',",
+					"        method: 'POST',",
+					"        header: {",
+					"            'Authorization': 'Basic  YWRtaW4tY2xpZW50OjEyMzQ1Ng==',",
+					"            'X-SOLDOUT-STATISTIC-APP-ACCESS': 'b9011a8e5cdb1b62ec5513e2303c2b78',",
+					"            'Content-Type': 'application/x-www-form-urlencoded'",
+					"        },",
+					"        body: {",
+					"            mode: 'urlencoded',",
+					"            urlencoded: [",
+					"                { key: 'username', value: username },",
+					"                { key: 'password', value: password },",
+					"                { key: 'grant_type', value: 'password' }",
+					"            ]",
+					"        }",
+					"    }, function (err, res) {",
+					"        if (err) {",
+					"            console.log('Помилка отримання токену:', err);",
+					"            return;",
+					"        }",
+					"        ",
+					"        const jsonData = res.json();",
+					"        if (jsonData.access_token) {",
+					"            pm.environment.set('access_token', jsonData.access_token);",
+					"            // Встановлюємо час закінчення токену (зазвичай 3600 секунд)",
+					"            const expiresIn = jsonData.expires_in || 3600;",
+					"            const expiryTime = new Date().getTime() + (expiresIn * 1000) - 60000; // -1 хвилина для безпеки",
+					"            pm.environment.set('token_expiry', expiryTime);",
+					"            console.log('Токен успішно отримано');",
+					"        } else {",
+					"            console.log('Помилка: токен не отримано', jsonData);",
+					"        }",
+					"    });",
+					"} else {",
+					"    console.log('Використовується існуючий токен');",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://z.test.soldout.com.ua",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "username",
+			"value": "d.crosspost@gmail.com",
+			"type": "string"
+		},
+		{
+			"key": "password",
+			"value": "aXLYjbfTNNN_soldout584",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Get OAuth Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const jsonData = pm.response.json();",
+									"    pm.environment.set('access_token', jsonData.access_token);",
+									"    const expiresIn = jsonData.expires_in || 3600;",
+									"    const expiryTime = new Date().getTime() + (expiresIn * 1000) - 60000;",
+									"    pm.environment.set('token_expiry', expiryTime);",
+									"    ",
+									"    pm.test('Token отримано успішно', function () {",
+									"        pm.expect(jsonData.access_token).to.exist;",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic  YWRtaW4tY2xpZW50OjEyMzQ1Ng==",
+								"type": "text"
+							},
+							{
+								"key": "X-SOLDOUT-STATISTIC-APP-ACCESS",
+								"value": "b9011a8e5cdb1b62ec5513e2303c2b78",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "{{username}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{password}}",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/main-service/oauth/token",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"main-service",
+								"oauth",
+								"token"
+							]
+						},
+						"description": "Отримання OAuth токену для автентифікації.\n\n**Параметри:**\n- `username` - email користувача\n- `password` - пароль користувача\n- `grant_type` - завжди 'password'\n\n**Відповідь:**\n- `access_token` - токен для подальших запитів\n- `expires_in` - час життя токену в секундах"
+					}
+				},
+				{
+					"name": "Get User Info",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-SOLDOUT-STATISTIC-APP-ACCESS",
+								"value": "b9011a8e5cdb1b62ec5513e2303c2b78",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/main-service/user/get",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"main-service",
+								"user",
+								"get"
+							]
+						},
+						"description": "Отримання інформації про поточного користувача.\n\n**Відповідь:**\n- `firstName` - ім'я\n- `lastName` - прізвище\n- `mail` - email\n- `phone` - телефон"
+					}
+				}
+			],
+			"description": "Ендпоінти для автентифікації та отримання інформації про користувача"
+		},
+		{
+			"name": "Dashboard & Statistics",
+			"item": [
+				{
+					"name": "Get Summary by Period",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-SOLDOUT-STATISTIC-APP-ACCESS",
+								"value": "b9011a8e5cdb1b62ec5513e2303c2b78",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/main-service/api/find-sum-by-organizator?dateFrom={{dateFrom}}&dateTo={{dateTo}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"main-service",
+								"api",
+								"find-sum-by-organizator"
+							],
+							"query": [
+								{
+									"key": "dateFrom",
+									"value": "{{dateFrom}}",
+									"description": "Початкова дата у форматі ISO: YYYY-MM-DDTHH:mm:ss",
+									"example": "2024-01-15T00:00:00"
+								},
+								{
+									"key": "dateTo",
+									"value": "{{dateTo}}",
+									"description": "Кінцева дата у форматі ISO: YYYY-MM-DDTHH:mm:ss",
+									"example": "2024-01-15T23:59:59"
+								}
+							]
+						},
+						"description": "Отримання загальної статистики за період.\n\n**Параметри:**\n- `dateFrom` - початкова дата (ISO формат)\n- `dateTo` - кінцева дата (ISO формат)\n\n**Відповідь:**\n- `allTicketSum` - загальна сума квитків\n- `offlineTicketSum` - сума офлайн квитків\n- `onlineTicketSum` - сума онлайн квитків\n- `inviteTicketSum` - сума запрошень\n- `bookedTicketSum` - сума заброньованих\n- `hardLockedTicketSum` - сума каси"
+					}
+				},
+				{
+					"name": "Get All Orders Count",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-SOLDOUT-STATISTIC-APP-ACCESS",
+								"value": "b9011a8e5cdb1b62ec5513e2303c2b78",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/main-service/api/find-orders-by-organizator?dateFrom={{dateFrom}}&dateTo={{dateTo}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"main-service",
+								"api",
+								"find-orders-by-organizator"
+							],
+							"query": [
+								{
+									"key": "dateFrom",
+									"value": "{{dateFrom}}",
+									"description": "Початкова дата",
+									"example": "2024-01-15T00:00:00"
+								},
+								{
+									"key": "dateTo",
+									"value": "{{dateTo}}",
+									"description": "Кінцева дата",
+									"example": "2024-01-15T23:59:59"
+								}
+							]
+						},
+						"description": "Отримання кількості замовлень за період.\n\n**Відповідь:**\n- `allOrderCount` - загальна кількість замовлень"
+					}
+				},
+				{
+					"name": "Get All Tickets Count",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-SOLDOUT-STATISTIC-APP-ACCESS",
+								"value": "b9011a8e5cdb1b62ec5513e2303c2b78",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/main-service/api/find-tickets-by-organizator-short?dateFrom={{dateFrom}}&dateTo={{dateTo}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"main-service",
+								"api",
+								"find-tickets-by-organizator-short"
+							],
+							"query": [
+								{
+									"key": "dateFrom",
+									"value": "{{dateFrom}}",
+									"description": "Початкова дата",
+									"example": "2024-01-15T00:00:00"
+								},
+								{
+									"key": "dateTo",
+									"value": "{{dateTo}}",
+									"description": "Кінцева дата",
+									"example": "2024-01-15T23:59:59"
+								}
+							]
+						},
+						"description": "Отримання кількості квитків за період.\n\n**Відповідь:**\n- `allTicketCount` - загальна кількість квитків"
+					}
+				},
+				{
+					"name": "Get Statistics for Entry Screen",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-SOLDOUT-STATISTIC-APP-ACCESS",
+								"value": "b9011a8e5cdb1b62ec5513e2303c2b78",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/main-service/api/find-events-by-organizator-main-short-info?dateFrom={{dateFrom}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"main-service",
+								"api",
+								"find-events-by-organizator-main-short-info"
+							],
+							"query": [
+								{
+									"key": "dateFrom",
+									"value": "{{dateFrom}}",
+									"description": "Дата від якої отримувати статистику (7 днів назад)",
+									"example": "2024-01-08T23:59:59"
+								}
+							]
+						},
+						"description": "Отримання статистики для головного екрану (графіки за 7 днів).\n\n**Відповідь:**\nМасив об'єктів з:\n- `statisticDayTimestamp` - дата статистики\n- `soldTickets` - продано квитків\n- `bookedTickets` - заброньовано квитків\n- `soldTicketMoney` - сума проданих квитків"
+					}
+				}
+			],
+			"description": "Ендпоінти для головного екрану (Dashboard) та загальної статистики"
+		},
+		{
+			"name": "Events",
+			"item": [
+				{
+					"name": "Get Bought Events",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-SOLDOUT-STATISTIC-APP-ACCESS",
+								"value": "b9011a8e5cdb1b62ec5513e2303c2b78",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/main-service/api/find-bought-events-by-organizator?dateFrom={{dateFrom}}&dateTo={{dateTo}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"main-service",
+								"api",
+								"find-bought-events-by-organizator"
+							],
+							"query": [
+								{
+									"key": "dateFrom",
+									"value": "{{dateFrom}}",
+									"description": "Початкова дата",
+									"example": "2024-01-15T00:00:00"
+								},
+								{
+									"key": "dateTo",
+									"value": "{{dateTo}}",
+									"description": "Кінцева дата",
+									"example": "2024-01-15T23:59:59"
+								}
+							]
+						},
+						"description": "Отримання списку куплених подій за період.\n\n**Відповідь:**\nМасив подій з інформацією про подію, організатора, дату, кількість замовлень та квитків"
+					}
+				},
+				{
+					"name": "Get Events Today",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-SOLDOUT-STATISTIC-APP-ACCESS",
+								"value": "b9011a8e5cdb1b62ec5513e2303c2b78",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/main-service/api/find-bought-events-and-info-by-organizator",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"main-service",
+								"api",
+								"find-bought-events-and-info-by-organizator"
+							]
+						},
+						"description": "Отримання подій за сьогодні.\n\n**Відповідь:**\nМасив подій за сьогоднішній день"
+					}
+				},
+				{
+					"name": "Get Archive Events",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-SOLDOUT-STATISTIC-APP-ACCESS",
+								"value": "b9011a8e5cdb1b62ec5513e2303c2b78",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/main-service/api/find-archive-events-by-organizator?dateFrom={{dateFrom}}&dateTo={{dateTo}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"main-service",
+								"api",
+								"find-archive-events-by-organizator"
+							],
+							"query": [
+								{
+									"key": "dateFrom",
+									"value": "{{dateFrom}}",
+									"description": "Початкова дата",
+									"example": "2024-01-01T00:00:00"
+								},
+								{
+									"key": "dateTo",
+									"value": "{{dateTo}}",
+									"description": "Кінцева дата",
+									"example": "2024-01-31T23:59:59"
+								}
+							]
+						},
+						"description": "Отримання архівних подій за період.\n\n**Відповідь:**\nМасив архівних подій"
+					}
+				}
+			],
+			"description": "Ендпоінти для роботи з подіями"
+		},
+		{
+			"name": "Event Details",
+			"item": [
+				{
+					"name": "Get Event Sum (Money)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-SOLDOUT-STATISTIC-APP-ACCESS",
+								"value": "b9011a8e5cdb1b62ec5513e2303c2b78",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/main-service/api/find-sum-by-event/{{eventId}}?dateFrom={{dateFrom}}&dateTo={{dateTo}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"main-service",
+								"api",
+								"find-sum-by-event",
+								"{{eventId}}"
+							],
+							"query": [
+								{
+									"key": "dateFrom",
+									"value": "{{dateFrom}}",
+									"description": "Початкова дата (опціонально, для фільтрації за датою)",
+									"example": "2024-01-15T00:00:00"
+								},
+								{
+									"key": "dateTo",
+									"value": "{{dateTo}}",
+									"description": "Кінцева дата (опціонально)",
+									"example": "2024-01-15T23:59:59"
+								}
+							]
+						},
+						"description": "Отримання статистики по сумі для конкретної події.\n\n**Параметри:**\n- `eventId` - ID події (в URL)\n- `dateFrom`, `dateTo` - опціональні параметри для фільтрації за датою\n\n**Відповідь:**\n- `allTicketSum` - загальна сума проданих квитків\n- `notSoldTicketSum` - сума не проданих квитків\n- `offlineTicketSum` - сума офлайн квитків\n- `onlineTicketSum` - сума онлайн квитків\n- `inviteTicketSum` - сума запрошень\n- `bookedTicketSum` - сума заброньованих\n- `hardLockedTicketSum` - сума каси"
+					}
+				},
+				{
+					"name": "Get Event Count (Tickets)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-SOLDOUT-STATISTIC-APP-ACCESS",
+								"value": "b9011a8e5cdb1b62ec5513e2303c2b78",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/main-service/api/find-count-by-event/{{eventId}}?dateFrom={{dateFrom}}&dateTo={{dateTo}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"main-service",
+								"api",
+								"find-count-by-event",
+								"{{eventId}}"
+							],
+							"query": [
+								{
+									"key": "dateFrom",
+									"value": "{{dateFrom}}",
+									"description": "Початкова дата (опціонально)",
+									"example": "2024-01-15T00:00:00"
+								},
+								{
+									"key": "dateTo",
+									"value": "{{dateTo}}",
+									"description": "Кінцева дата (опціонально)",
+									"example": "2024-01-15T23:59:59"
+								}
+							]
+						},
+						"description": "Отримання статистики по кількості квитків для конкретної події.\n\n**Відповідь:**\n- `allTicketCount` - загальна кількість квитків\n- `notSoldTicketCount` - кількість не проданих\n- `allBoughtTicketCount` - кількість куплених\n- `offlineTicketCount` - кількість офлайн\n- `onlineTicketCount` - кількість онлайн\n- `inviteTicketCount` - кількість запрошень\n- `bookedTicketCount` - кількість заброньованих\n- `hardLockedTicketCount` - кількість каси"
+					}
+				},
+				{
+					"name": "Get Event Details Table (All Ticket Types)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-SOLDOUT-STATISTIC-APP-ACCESS",
+								"value": "b9011a8e5cdb1b62ec5513e2303c2b78",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/main-service/api/find-color-price-by-event/{{eventId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"main-service",
+								"api",
+								"find-color-price-by-event",
+								"{{eventId}}"
+							]
+						},
+						"description": "Отримання всіх типів квитків події з кольорами та цінами.\n\n**Параметри:**\n- `eventId` - ID події (в URL)\n\n**Відповідь:**\nМасив об'єктів з:\n- `color` - колір типу квитка (hex)\n- `price` - ціна квитка\n- `availableTickets` - доступна кількість квитків\n\n**Використання:**\nЦей ендпоінт використовується як базова структура для таблиці \"Додаткова інформація\""
+					}
+				},
+				{
+					"name": "Get Event Details Table For Date",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-SOLDOUT-STATISTIC-APP-ACCESS",
+								"value": "b9011a8e5cdb1b62ec5513e2303c2b78",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/main-service/api/find-color-price-by-event-and-date/{{eventId}}?dateFrom={{dateFrom}}&dateTo={{dateTo}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"main-service",
+								"api",
+								"find-color-price-by-event-and-date",
+								"{{eventId}}"
+							],
+							"query": [
+								{
+									"key": "dateFrom",
+									"value": "{{dateFrom}}",
+									"description": "Початкова дата",
+									"example": "2024-01-15T00:00:00"
+								},
+								{
+									"key": "dateTo",
+									"value": "{{dateTo}}",
+									"description": "Кінцева дата",
+									"example": "2024-01-15T23:59:59"
+								}
+							]
+						},
+						"description": "Отримання деталей квитків події за конкретну дату.\n\n**Параметри:**\n- `eventId` - ID події (в URL)\n- `dateFrom`, `dateTo` - дати для фільтрації\n\n**Відповідь:**\nМасив об'єктів з:\n- `color` - колір типу квитка\n- `price` - ціна квитка\n- `inviteTickets` - кількість запрошень\n- `bookedTickets` - кількість заброньованих\n- `soldTickets` - кількість проданих\n\n**Використання:**\nЦей ендпоінт використовується для отримання даних про запрошення, бронювання та продажі за конкретну дату в таблиці \"Додаткова інформація\""
+					}
+				},
+				{
+					"name": "Get Event Sold Short Info",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "X-SOLDOUT-STATISTIC-APP-ACCESS",
+								"value": "b9011a8e5cdb1b62ec5513e2303c2b78",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/main-service/api/find-events-by-organizator-sold-short-info/{{eventId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"main-service",
+								"api",
+								"find-events-by-organizator-sold-short-info",
+								"{{eventId}}"
+							]
+						},
+						"description": "Отримання короткої інформації про продажі події (для графіків).\n\n**Параметри:**\n- `eventId` - ID події (в URL)\n\n**Відповідь:**\nМасив об'єктів з:\n- `soldTicketsMoney` - сума проданих квитків за день\n\n**Використання:**\nВикористовується для побудови графіків продажів по днях"
+					}
+				}
+			],
+			"description": "Ендпоінти для детальної інформації про подію"
+		}
+	]
+}

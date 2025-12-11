@@ -34,6 +34,8 @@ import createApp from './app.js'
 
 
 
+import qboot_Bootcordova from 'boot/cordova'
+
 import qboot_Bootaxios from 'boot/axios'
 
 
@@ -45,11 +47,13 @@ import qboot_Bootaxios from 'boot/axios'
 
 
 
-const { app, store, router } = createApp()
-
 
 
 async function start () {
+  const { app, store, router } = await createApp()
+
+  
+
   
   let routeUnchanged = true
   const redirect = url => {
@@ -58,7 +62,7 @@ async function start () {
   }
 
   const urlPath = window.location.href.replace(window.location.origin, '')
-  const bootFiles = [qboot_Bootaxios]
+  const bootFiles = [qboot_Bootcordova,qboot_Bootaxios]
 
   for (let i = 0; routeUnchanged === true && i < bootFiles.length; i++) {
     if (typeof bootFiles[i] !== 'function') {
@@ -98,7 +102,11 @@ async function start () {
 
     
 
+    
       new Vue(app)
+    
+
+    
 
     
 

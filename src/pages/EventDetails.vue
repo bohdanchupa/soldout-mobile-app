@@ -459,36 +459,59 @@ export default {
         'Authorization': 'Bearer  ' + this.$store.getters.getAccessToken
       }
     }).then((res) => {
-      this.tableInf.colors = []
-      this.tableInf.quantityOfSum = []
-      this.tableInf.prices = []
-      this.tableInf.quantity = []
-      this.tableInf.invitations = []
-      this.tableInf.invitationsOfSum = []
-      this.tableInf.reserved = []
-      this.tableInf.reservedOfSum = []
-      this.tableInf.soldedOfSum = []
-      this.tableInf.solded = []
-      for (let i = 0; i < res.data.length; i++) {
-        this.tableInf.colors.push(res.data[i].color)
-        this.tableInf.invitations.push(+res.data[i].inviteTickets)
-        this.tableInf.invitationsOfSum.push(+res.data[i].inviteTickets * +res.data[i].price)
-        this.tableInf.reserved.push(+res.data[i].bookedTickets)
-        this.tableInf.reservedOfSum.push(+res.data[i].bookedTickets * +res.data[i].price)
-        this.tableInf.solded.push(+res.data[i].soldTickets)
-        this.tableInf.soldedOfSum.push(+res.data[i].soldTickets * +res.data[i].price)
-      }
+      // Store the date-specific data temporarily
+      const dateSpecificData = res.data
+      
+      // Make the second API call to get all ticket types
       this.$axios({
         methods: 'get',
         url: epEventDetailsTable + '/' + this.idOfEvent,
         headers: {
           'Authorization': 'Bearer  ' + this.$store.getters.getAccessToken
         }
-      }).then((res) => {
-        for (let i = 0; i < res.data.length; i++) {
-          this.tableInf.quantityOfSum.push(+res.data[i].availableTickets * +res.data[i].price)
-          this.tableInf.prices.push(+res.data[i].price)
-          this.tableInf.quantity.push(+res.data[i].availableTickets)
+      }).then((allTicketsRes) => {
+        // Initialize all arrays
+        this.tableInf.colors = []
+        this.tableInf.quantityOfSum = []
+        this.tableInf.prices = []
+        this.tableInf.quantity = []
+        this.tableInf.invitations = []
+        this.tableInf.invitationsOfSum = []
+        this.tableInf.reserved = []
+        this.tableInf.reservedOfSum = []
+        this.tableInf.soldedOfSum = []
+        this.tableInf.solded = []
+        
+        // Use allTicketsRes as the base structure to ensure all ticket types are included
+        // Match date-specific data by color and price
+        for (let i = 0; i < allTicketsRes.data.length; i++) {
+          const ticketType = allTicketsRes.data[i]
+          this.tableInf.colors.push(ticketType.color)
+          this.tableInf.prices.push(+ticketType.price)
+          this.tableInf.quantity.push(+ticketType.availableTickets)
+          this.tableInf.quantityOfSum.push(+ticketType.availableTickets * +ticketType.price)
+          
+          // Find matching date-specific data by color and price
+          const matchingDateData = dateSpecificData.find(item => 
+            item.color === ticketType.color && +item.price === +ticketType.price
+          )
+          
+          if (matchingDateData) {
+            this.tableInf.invitations.push(+matchingDateData.inviteTickets)
+            this.tableInf.invitationsOfSum.push(+matchingDateData.inviteTickets * +matchingDateData.price)
+            this.tableInf.reserved.push(+matchingDateData.bookedTickets)
+            this.tableInf.reservedOfSum.push(+matchingDateData.bookedTickets * +matchingDateData.price)
+            this.tableInf.solded.push(+matchingDateData.soldTickets)
+            this.tableInf.soldedOfSum.push(+matchingDateData.soldTickets * +matchingDateData.price)
+          } else {
+            // If no matching date data found, set to 0
+            this.tableInf.invitations.push(0)
+            this.tableInf.invitationsOfSum.push(0)
+            this.tableInf.reserved.push(0)
+            this.tableInf.reservedOfSum.push(0)
+            this.tableInf.solded.push(0)
+            this.tableInf.soldedOfSum.push(0)
+          }
         }
       })
     })

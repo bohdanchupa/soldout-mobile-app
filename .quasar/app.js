@@ -23,15 +23,17 @@ import createRouter from 'app/src/router/index'
 
 
 
-export default function () {
+
+
+export default async function () {
   // create store and router instances
   
   const store = typeof createStore === 'function'
-    ? createStore({Vue})
+    ? await createStore({Vue})
     : createStore
   
   const router = typeof createRouter === 'function'
-    ? createRouter({Vue, store})
+    ? await createRouter({Vue, store})
     : createRouter
   
   // make router instance available in store
@@ -42,12 +44,14 @@ export default function () {
   // Here we inject the router, store to all child components,
   // making them available everywhere as `this.$router` and `this.$store`.
   const app = {
-    el: '#q-app',
     router,
     store,
     render: h => h(App)
   }
 
+
+  
+  app.el = '#q-app'
   
 
   // expose the app, the router and the store.
