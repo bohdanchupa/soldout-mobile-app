@@ -130,63 +130,63 @@
               </tr>
               <tr>
                 <td>Ціна квитка:</td>
-                <td><b>{{totalOf(tableInf.prices)}}</b> грн</td>
+                <td><b>{{allTicketsData ? allTicketsData.price : '-'}}</b> грн</td>
                 <td v-for="(inf, index) in tableInf.prices" :key="index">
-                  <b>{{inf}}</b> грн
+                  <b>{{inf !== undefined && inf !== null ? inf : '-'}}</b> грн
                 </td>
               </tr>
               <tr>
                 <td>Квота, шт.</td>
-                <td><b>{{totalOf(tableInf.quantity)}}</b></td>
+                <td><b>{{allTicketsData ? allTicketsData.quantity : '-'}}</b></td>
                 <td v-for="(inf, index) in tableInf.quantity" :key="index">
-                  <b>{{inf}}</b>
+                  <b>{{inf !== undefined && inf !== null ? inf : '-'}}</b>
                 </td>
               </tr>
               <tr>
                 <td>Квота на суму</td>
-                <td><b>{{totalOf(tableInf.quantityOfSum)}}</b></td>
+                <td><b>{{allTicketsData ? allTicketsData.quantityOfSum : '-'}}</b></td>
                 <td v-for="(inf, index) in tableInf.quantityOfSum" :key="index">
-                  <b>{{inf}}</b>
+                  <b>{{inf !== undefined && inf !== null ? inf : '-'}}</b>
                 </td>
               </tr>
               <tr>
                 <td>Запрошення, шт</td>
-                <td><b>{{totalOf(tableInf.invitations)}}</b></td>
+                <td><b>{{allTicketsData ? allTicketsData.invitations : '-'}}</b></td>
                 <td v-for="(inf, index) in tableInf.invitations" :key="index">
                   <b>{{inf}}</b>
                 </td>
               </tr>
               <tr>
                 <td>Запрошення на суму</td>
-                <td><b>{{totalOf(tableInf.invitationsOfSum)}}</b></td>
+                <td><b>{{allTicketsData ? allTicketsData.invitationsOfSum : '-'}}</b></td>
                 <td v-for="(inf, index) in tableInf.invitationsOfSum" :key="index">
                   <b>{{inf}}</b>
                 </td>
               </tr>
               <tr>
                 <td>Продано, шт</td>
-                <td><b>{{totalOf(tableInf.solded)}}</b></td>
+                <td><b>{{allTicketsData ? allTicketsData.solded : '-'}}</b></td>
                 <td v-for="(inf, index) in tableInf.solded" :key="index">
                   <b>{{inf}}</b>
                 </td>
               </tr>
               <tr>
                 <td>Продано на суму</td>
-                <td><b>{{totalOf(tableInf.soldedOfSum)}}</b></td>
+                <td><b>{{allTicketsData ? allTicketsData.soldedOfSum : '-'}}</b></td>
                 <td v-for="(inf, index) in tableInf.soldedOfSum" :key="index">
                   <b>{{inf}}</b>
                 </td>
               </tr>
               <tr>
                 <td>Заброньовано, шт</td>
-                <td><b>{{totalOf(tableInf.reserved)}}</b></td>
+                <td><b>{{allTicketsData ? allTicketsData.reserved : '-'}}</b></td>
                 <td v-for="(inf, index) in tableInf.reserved" :key="index">
                   <b>{{inf}}</b>
                 </td>
               </tr>
               <tr>
                 <td>Заброньовано на суму</td>
-                <td><b>{{totalOf(tableInf.reservedOfSum)}}</b></td>
+                <td><b>{{allTicketsData ? allTicketsData.reservedOfSum : '-'}}</b></td>
                 <td v-for="(inf, index) in tableInf.reservedOfSum" :key="index">
                   <b>{{inf}}</b>
                 </td>
@@ -203,27 +203,27 @@
             <table>
               <tr>
                 <td>Всього квитків:</td>
-                <td><b>{{totalOf(tableInf.quantity)}}</b></td>
+                <td><b>{{allTicketsData ? allTicketsData.quantity : '-'}}</b></td>
                 <td>На суму:</td>
-                <td><b>{{totalOf(tableInf.quantityOfSum)}}</b></td>
+                <td><b>{{allTicketsData ? allTicketsData.quantityOfSum : '-'}}</b></td>
               </tr>
               <tr>
                 <td>Доступно квитків:</td>
-                <td><b>{{totalOf(tableInf.quantity) - totalOf(tableInf.solded)}}</b></td>
+                <td><b>{{allTicketsData ? (allTicketsData.quantity - allTicketsData.solded) : '-'}}</b></td>
                 <td>На суму:</td>
-                <td><b>{{totalOf(tableInf.quantityOfSum) - totalOf(tableInf.soldedOfSum)}}</b></td>
+                <td><b>{{allTicketsData ? (allTicketsData.quantityOfSum - allTicketsData.soldedOfSum) : '-'}}</b></td>
               </tr>
               <tr>
                 <td>Заброньовано:</td>
-                <td><b>{{totalOf(tableInf.reserved)}}</b></td>
+                <td><b>{{allTicketsData ? allTicketsData.reserved : '-'}}</b></td>
                 <td>На суму:</td>
-                <td><b>{{totalOf(tableInf.reservedOfSum)}}</b></td>
+                <td><b>{{allTicketsData ? allTicketsData.reservedOfSum : '-'}}</b></td>
               </tr>
               <tr>
                 <td>Продано:</td>
-                <td><b>{{totalOf(tableInf.solded)}}</b></td>
+                <td><b>{{allTicketsData ? allTicketsData.solded : '-'}}</b></td>
                 <td>На суму:</td>
-                <td><b>{{totalOf(tableInf.soldedOfSum)}}</b></td>
+                <td><b>{{allTicketsData ? allTicketsData.soldedOfSum : '-'}}</b></td>
               </tr>
             </table>
           </div>
@@ -332,6 +332,7 @@ export default {
         reserved: [],
         reservedOfSum: []
       },
+      allTicketsData: null,
       details: null,
       idOfEvent: undefined
     }
@@ -459,36 +460,96 @@ export default {
         'Authorization': 'Bearer  ' + this.$store.getters.getAccessToken
       }
     }).then((res) => {
-      this.tableInf.colors = []
-      this.tableInf.quantityOfSum = []
-      this.tableInf.prices = []
-      this.tableInf.quantity = []
-      this.tableInf.invitations = []
-      this.tableInf.invitationsOfSum = []
-      this.tableInf.reserved = []
-      this.tableInf.reservedOfSum = []
-      this.tableInf.soldedOfSum = []
-      this.tableInf.solded = []
+      // Знаходимо елемент "All_Tickets" для колонки "Всього"
+      let allTicketsItem = null
       for (let i = 0; i < res.data.length; i++) {
-        this.tableInf.colors.push(res.data[i].color)
-        this.tableInf.invitations.push(+res.data[i].inviteTickets)
-        this.tableInf.invitationsOfSum.push(+res.data[i].inviteTickets * +res.data[i].price)
-        this.tableInf.reserved.push(+res.data[i].bookedTickets)
-        this.tableInf.reservedOfSum.push(+res.data[i].bookedTickets * +res.data[i].price)
-        this.tableInf.solded.push(+res.data[i].soldTickets)
-        this.tableInf.soldedOfSum.push(+res.data[i].soldTickets * +res.data[i].price)
+        if (res.data[i].color === 'All_Tickets') {
+          allTicketsItem = res.data[i]
+          break
+        }
       }
+      
+      // Зберігаємо дані "All_Tickets"
+      if (allTicketsItem) {
+        this.allTicketsData = {
+          price: +allTicketsItem.price || 0,
+          quantity: +allTicketsItem.availableTickets || 0,
+          quantityOfSum: +allTicketsItem.availableTicketsSum || 0,
+          invitations: +allTicketsItem.inviteTickets || 0,
+          invitationsOfSum: +allTicketsItem.inviteTicketsSum || 0,
+          solded: +allTicketsItem.soldTickets || 0,
+          soldedOfSum: +allTicketsItem.soldTicketsSum || 0,
+          reserved: +allTicketsItem.bookedTickets || 0,
+          reservedOfSum: +allTicketsItem.bookedTicketsSum || 0
+        }
+      }
+
+      // Спочатку отримуємо дані з квотами
       this.$axios({
         methods: 'get',
         url: epEventDetailsTable + '/' + this.idOfEvent,
         headers: {
           'Authorization': 'Bearer  ' + this.$store.getters.getAccessToken
         }
-      }).then((res) => {
+      }).then((quotaRes) => {
+        // Створюємо мапу квот за кольором для швидкого пошуку
+        const quotaMap = {}
+        for (let i = 0; i < quotaRes.data.length; i++) {
+          const item = quotaRes.data[i]
+          // Пропускаємо "All_Tickets" - він не є окремим типом квитка
+          if (item.color === 'All_Tickets') {
+            continue
+          }
+          quotaMap[item.color] = {
+            quantity: +item.availableTickets,
+            price: +item.price,
+            quantityOfSum: +item.availableTickets * +item.price
+          }
+        }
+
+        // Очищаємо всі масиви
+        this.tableInf.colors = []
+        this.tableInf.quantityOfSum = []
+        this.tableInf.prices = []
+        this.tableInf.quantity = []
+        this.tableInf.invitations = []
+        this.tableInf.invitationsOfSum = []
+        this.tableInf.reserved = []
+        this.tableInf.reservedOfSum = []
+        this.tableInf.soldedOfSum = []
+        this.tableInf.solded = []
+
+        // Заповнюємо дані, синхронізуючи за кольором (виключаємо "All_Tickets")
         for (let i = 0; i < res.data.length; i++) {
-          this.tableInf.quantityOfSum.push(+res.data[i].availableTickets * +res.data[i].price)
-          this.tableInf.prices.push(+res.data[i].price)
-          this.tableInf.quantity.push(+res.data[i].availableTickets)
+          const item = res.data[i]
+          const color = item.color
+          
+          // Пропускаємо "All_Tickets" - він використовується тільки для колонки "Всього"
+          if (color === 'All_Tickets') {
+            continue
+          }
+          
+          this.tableInf.colors.push(color)
+          this.tableInf.invitations.push(+item.inviteTickets || 0)
+          this.tableInf.invitationsOfSum.push(+item.inviteTicketsSum || 0)
+          this.tableInf.reserved.push(+item.bookedTickets || 0)
+          this.tableInf.reservedOfSum.push(+item.bookedTicketsSum || 0)
+          this.tableInf.solded.push(+item.soldTickets || 0)
+          this.tableInf.soldedOfSum.push(+item.soldTicketsSum || 0)
+
+          // Синхронізуємо квоти за кольором
+          if (quotaMap[color]) {
+            this.tableInf.quantity.push(quotaMap[color].quantity)
+            this.tableInf.prices.push(quotaMap[color].price)
+            this.tableInf.quantityOfSum.push(quotaMap[color].quantityOfSum)
+          } else {
+            // Якщо квоти немає для цього кольору, використовуємо дані з першого API або 0
+            const price = +item.price || 0
+            const quantity = 0 // Якщо немає в quotaMap, встановлюємо 0
+            this.tableInf.quantity.push(quantity)
+            this.tableInf.prices.push(price)
+            this.tableInf.quantityOfSum.push(quantity * price)
+          }
         }
       })
     })
@@ -534,7 +595,10 @@ export default {
     totalOf (array) {
       let total = 0
       for (let i = 0; i < array.length; i++) {
-        total += array[i]
+        const value = array[i]
+        if (value !== undefined && value !== null && !isNaN(value)) {
+          total += +value
+        }
       }
       return total
     },

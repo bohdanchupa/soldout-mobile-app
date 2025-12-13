@@ -9,6 +9,7 @@ const authorizationBasic = 'Basic c3BvbnNvci1jbGllbnQ6MTIzNDU2'
 const makeRequest = async (config) => {
   const isCordova = window.cordova !== undefined
   const hasHttpPlugin = isCordova && window.cordova.plugin && window.cordova.plugin.http
+  const isSimulator = !!window.device?.isVirtual
 
   console.log('🔍 HTTP CHECK:', {
     isCordova,
@@ -17,14 +18,14 @@ const makeRequest = async (config) => {
     httpPlugin: window.cordova?.plugin?.http
   })
 
-  if (hasHttpPlugin) {
+  if (hasHttpPlugin && !isSimulator) {
     console.log('📱 Using Cordova Native HTTP Plugin')
     const http = window.cordova.plugin.http
 
     try {
-      // Build URL with params
+      // Build URL with params (GET only)
       let url = config.url
-      if (config.params) {
+      if (config.params && config.method.toLowerCase() === 'get') {
         const params = new URLSearchParams(config.params).toString()
         url = `${url}?${params}`
       }
@@ -32,13 +33,27 @@ const makeRequest = async (config) => {
       const headers = config.headers || {}
       const method = config.method.toLowerCase()
 
-      // Set data serializer
-      http.setDataSerializer('utf8')
+      // Set data serializer for form-style payloads
+      http.setDataSerializer('urlencoded')
+
+      // For POST use body (form-encoded). Fallback to params if data is not provided.
+      const body = method === 'post'
+        ? (config.data || config.params || {})
+        : {}
 
       let response
       if (method === 'post') {
         response = await new Promise((resolve, reject) => {
-          http.sendRequest(url, { method: 'post', data: {}, headers: headers }, resolve, reject)
+          http.post(
+            url,
+            body,
+            {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              ...headers
+            },
+            resolve,
+            reject
+          )
         })
       } else if (method === 'get') {
         response = await new Promise((resolve, reject) => {
@@ -47,8 +62,8 @@ const makeRequest = async (config) => {
       }
 
       // Parse response
-      const data = typeof response.data === 'string' ? JSON.parse(response.data) : response.data
-      return { data }
+      const parsedData = typeof response.data === 'string' ? JSON.parse(response.data) : response.data
+      return { data: parsedData }
     } catch (error) {
       console.error('❌ Cordova HTTP Error:', error)
       const err = new Error(error.error || 'Network Error')
@@ -56,6 +71,9 @@ const makeRequest = async (config) => {
       throw err
     }
   } else {
+    if (hasHttpPlugin && isSimulator) {
+      console.log('🖥️ iOS Simulator detected, falling back to Axios')
+    }
     console.log('🌐 Using Axios (Web)')
     console.log('  Axios Request Config:', JSON.stringify(config, null, 2))
 

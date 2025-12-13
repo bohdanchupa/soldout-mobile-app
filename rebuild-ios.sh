@@ -9,14 +9,26 @@ echo ""
 # Get the directory where the script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
+# Почистимо локальну dist, щоб уникнути старих артефактів (цей шлях змонтовано в контейнер)
+rm -rf dist/spa
 
 echo "📦 Step 1: Building web assets in Docker..."
-docker exec soldout-app-container sh -c "npx quasar build" > /dev/null 2>&1
+docker exec soldout-app-container sh -c "cd /app && npx quasar build"
+echo "🔎 Checking build output..."
+if ! docker exec soldout-app-container sh -c "[ -d /app/dist/spa ]"; then
+  echo "❌ Не знайдено /app/dist/spa у контейнері після quasar build"
+  echo "   Перевірте логи quasar або виконайте вручну:"
+  echo "   docker exec soldout-app-container sh -c \"cd /app && npx quasar build\""
+  exit 1
+fi
 echo "✅ Web assets built"
 
 echo "📋 Step 2: Copying from Docker to local..."
-rm -rf dist/spa
-docker cp soldout-app-container:/app/dist/spa ./dist/
+if [ ! -d dist/spa ]; then
+  echo "❌ dist/spa не знайдено на хості після білду (ймовірно, bind-mount не спрацював)"
+  echo "   Перевірте, що контейнер запущено з мапінгом робочої директорії"
+  exit 1
+fi
 rm -rf src-cordova/www
 mkdir -p src-cordova/www
 cp -r dist/spa/* src-cordova/www/
@@ -26,6 +38,15 @@ echo "🔧 Step 3: Running cordova prepare ios..."
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 cd src-cordova
+candidate_nvm="$HOME/.nvm/nvm.sh"
+if [ -s "$candidate_nvm" ]; then
+  # shellcheck source=/dev/null
+  . "$candidate_nvm"
+fi
+if ! command -v node >/dev/null 2>&1; then
+  echo "❌ Node не знайдено. Увімкніть nvm або встановіть Node 14/18."
+  exit 1
+fi
 cordova prepare ios > /dev/null 2>&1
 echo "✅ Cordova prepared"
 

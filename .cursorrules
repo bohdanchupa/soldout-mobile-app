@@ -623,9 +623,10 @@ When helping with this project:
 ### Switch Environment
 ```javascript
 // src/api/endpoints.js
-const serviceUrl = 'https://z.soldout.com.ua'        // PROD
-// const serviceUrl = 'https://z.test.soldout.com.ua' // TEST
+const serviceUrl = 'https://z.test.soldout.com.ua'   // TEST (default)
+// const serviceUrl = 'https://z.soldout.com.ua'      // PROD
 ```
+🛠 За замовчуванням збирай TEST. Перед релізом у PROD перемикай serviceUrl та ребілдь.
 
 ### Update Credentials
 ```javascript
@@ -646,6 +647,15 @@ this.pass = 'sJAk969beho_'
 # Safari: Develop → iPhone → Soldout Event
 # Check Console, Network, Elements tabs
 ```
+
+### Обов'язковий цикл після будь-яких змін коду
+```bash
+# 1) Зібрати все:                ./rebuild-ios.sh
+# 2) Відкрити Xcode воркспейс:   open src-cordova/platforms/ios/Soldout\ Event.xcworkspace
+# 3) У Xcode: Clean (⌘⇧K) → Run (⌘R)
+# 4) Safari Web Inspector: Develop → iPhone → Soldout Event
+```
+⚠️ Завжди виконуй ці кроки після змін, щоб перевірити на реальному iPhone.
 
 ## Important Notes
 
