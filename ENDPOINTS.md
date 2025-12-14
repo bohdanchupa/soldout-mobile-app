@@ -171,7 +171,7 @@
   ```
 - **Price related**: ✅ **YES** - Contains `price` and `availableTicketsSum`
 - **Usage**: 
-  - Fills quota data in "Додаткова інформація" table
+  - Fills quota data in "Додаткова інформація1" table
   - Maps prices by color: `quotaMap[color].price`
   - Calculates `quantityOfSum = availableTickets * price`
 
@@ -189,8 +189,10 @@
     {
       color: string,                // Color code or "All_Tickets"
       price: number,                // ⭐ Ticket price
-      availableTickets: number,     // Available tickets
-      availableTicketsSum: number,  // ⭐ Quota sum
+      createdTickets: number,       // ⭐ QUOTA - Total created tickets (quota)
+      createdTicketsSum: number,    // ⭐ QUOTA SUM - Total quota sum (createdTickets * price)
+      availableTickets: number,     // ⭐ AVAILABLE - Available tickets for sale
+      availableTicketsSum: number,  // ⭐ AVAILABLE SUM - Available tickets sum (availableTickets * price)
       inviteTickets: number,         // Invitations count
       inviteTicketsSum: number,      // ⭐ Invitations sum
       soldTickets: number,           // Sold tickets count
@@ -203,15 +205,21 @@
   ```
 - **Price related**: ✅ **YES** - Contains multiple price/sum fields:
   - `price` - Ticket price
-  - `availableTicketsSum` - Quota sum
+  - `createdTickets` - ⭐ **QUOTA** (total created tickets)
+  - `createdTicketsSum` - ⭐ **QUOTA SUM** (quota in money)
+  - `availableTickets` - ⭐ **AVAILABLE** (tickets available for sale)
+  - `availableTicketsSum` - ⭐ **AVAILABLE SUM** (available tickets in money)
   - `inviteTicketsSum` - Invitations sum
   - `soldTicketsSum` - Sold tickets sum
   - `bookedTicketsSum` - Reserved tickets sum
 - **Usage**: 
-  - **Main source for "Додаткова інформація" table**
+  - **Main source for "Додаткова інформація1" table**
   - Extracts `All_Tickets` element for "Всього" column
-  - Fills table rows: invitations, reserved, solded (with sums)
-  - Used together with `epEventDetailsTable` to sync quota data
+  - **"Квота"** row: uses `createdTickets` and `createdTicketsSum`
+  - **"Доступно"** row: uses `availableTickets` and `availableTicketsSum`
+  - **"Запрошення"** row: uses `inviteTickets` and `inviteTicketsSum`
+  - **"Продано"** row: uses `soldTickets` and `soldTicketsSum`
+  - **"Заброньовано"** row: uses `bookedTickets` and `bookedTicketsSum`
 
 #### `epEventSoldShortInfo`
 - **URL**: `/main-service/api/find-events-by-organizator-sold-short-info`
@@ -237,9 +245,11 @@
 ### Primary Price Endpoints (used for displaying prices):
 
 1. **`epEventDetailsTableForDate`** ⭐⭐⭐
-   - **Main endpoint for "Додаткова інформація" table**
-   - Contains: `price`, `availableTicketsSum`, `inviteTicketsSum`, `soldTicketsSum`, `bookedTicketsSum`
+   - **Main endpoint for "Додаткова інформація1" table**
+   - Contains: `price`, `createdTickets`, `createdTicketsSum`, `availableTickets`, `availableTicketsSum`, `inviteTicketsSum`, `soldTicketsSum`, `bookedTicketsSum`
    - Used for: "Всього" column (from `All_Tickets` element) and individual ticket type columns
+   - **"Квота"**: `createdTickets` / `createdTicketsSum`
+   - **"Доступно"**: `availableTickets` / `availableTicketsSum`
 
 2. **`epEventDetailsTable`** ⭐⭐
    - Contains: `price`, `availableTicketsSum`
@@ -291,5 +301,6 @@
 
 - All endpoints require Bearer token authentication: `Authorization: Bearer <token>`
 - Date format: `YYYY-MM-DDTHH:mm:ss` (e.g., `2024-01-15T00:00:00`)
-- `epEventDetailsTableForDate` is the **primary endpoint** for price display in "Додаткова інформація" table
+- `epEventDetailsTableForDate` is the **primary endpoint** for price display in "Додаткова інформація1" table
 - The `All_Tickets` element from `epEventDetailsTableForDate` response is used for "Всього" column instead of calculating `totalOf()`
+
