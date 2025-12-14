@@ -17,13 +17,16 @@
     "cordova-browser": "^6.0.0"
   },
   "cordova": {
-    "plugins": {},
+    "plugins": {
+      "cordova-plugin-statusbar": {}
+    },
     "platforms": [
       "android",
       "browser"
     ]
   },
   "devDependencies": {
-    "cordova-ios": "^6.3.0"
+    "cordova-ios": "^6.3.0",
+    "cordova-plugin-statusbar": "^2.4.2"
   }
 }

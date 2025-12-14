@@ -475,7 +475,7 @@ export default {
     console.log('🔗 API URL:', apiUrl)
     console.log('📅 API Params:', params)
     console.log('🆔 Event ID:', this.idOfEvent)
-    
+
     this.$axios({
       methods: 'get',
       url: apiUrl,
@@ -486,7 +486,7 @@ export default {
     }).then((res) => {
       console.log('📊 API Response for event details table:', res.data)
       console.log('📊 API Response FULL DATA (stringified):', JSON.stringify(res.data, null, 2))
-      
+
       // Знаходимо елемент "All_Tickets" для колонки "Всього"
       let allTicketsItem = null
       for (let i = 0; i < res.data.length; i++) {
@@ -499,7 +499,7 @@ export default {
           break
         }
       }
-      
+
       // Зберігаємо дані "All_Tickets" для колонки "Всього"
       if (allTicketsItem) {
         this.allTicketsData = {
@@ -588,12 +588,12 @@ export default {
       for (let i = 0; i < res.data.length; i++) {
         const item = res.data[i]
         const color = item.color
-        
+
         // Пропускаємо "All_Tickets" - він використовується тільки для колонки "Всього"
         if (color === 'All_Tickets') {
           continue
         }
-        
+
         console.log(`🎨 Processing color ${color}:`)
         console.log(`   📦 Full item keys:`, Object.keys(item))
         console.log(`   ⭐ createdTickets:`, item.createdTickets, `(type: ${typeof item.createdTickets})`)
@@ -601,22 +601,22 @@ export default {
         console.log(`   ✅ availableTickets:`, item.availableTickets, `(type: ${typeof item.availableTickets})`)
         console.log(`   ✅ availableTicketsSum:`, item.availableTicketsSum, `(type: ${typeof item.availableTicketsSum})`)
         console.log(`   📋 Full item:`, JSON.stringify(item, null, 2))
-        
+
         this.tableInf.colors.push(color)
         this.tableInf.prices.push(+item.price || 0)
-        
+
         // ⭐ КВОТА: createdTickets - загальна кількість створених квитків (квота)
         // Джерело: epEventDetailsTableForDate поле createdTickets
         const createdTickets = +item.createdTickets || 0
         const createdTicketsSum = +item.createdTicketsSum || 0
         this.tableInf.createdTickets.push(createdTickets)
         this.tableInf.createdTicketsSum.push(createdTicketsSum)
-        
+
         // ⭐ ДОСТУПНО: availableTickets - квитки доступні для продажу
         // Джерело: epEventDetailsTableForDate поле availableTickets
         this.tableInf.quantity.push(+item.availableTickets || 0)
         this.tableInf.quantityOfSum.push(+item.availableTicketsSum || 0)
-        
+
         // Інші дані: запрошення, заброньовані, продані
         this.tableInf.invitations.push(+item.inviteTickets || 0)
         this.tableInf.invitationsOfSum.push(+item.inviteTicketsSum || 0)
@@ -625,7 +625,7 @@ export default {
         this.tableInf.solded.push(+item.soldTickets || 0)
         this.tableInf.soldedOfSum.push(+item.soldTicketsSum || 0)
       }
-      
+
       console.log('✅ Final QUOTA (createdTickets):', this.tableInf.createdTickets)
       console.log('✅ Final QUOTA SUM (createdTicketsSum):', this.tableInf.createdTicketsSum)
       console.log('✅ Final AVAILABLE (quantity):', this.tableInf.quantity)
@@ -729,6 +729,10 @@ export default {
 </script>
 
 <style lang="scss">
+  .page--event-detail {
+    min-height: 100%;
+    padding-bottom: 20px;
+  }
   .detail-window {
     margin: 20px 0;
   }

@@ -13,8 +13,9 @@
     background-attachment: fixed;
     background-image: url('../assets/page-bg-2.svg');
   }
-  &--today {
-    background-image: $linear_bg_2;
+  &--today, &--statistics {
+    /* Background перенесено до .q-page-container в general.scss */
+    /* щоб він покривав весь простір навіть з safe area padding */
   }
   &--event-detail {
     background-repeat: no-repeat;

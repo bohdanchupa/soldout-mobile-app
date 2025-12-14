@@ -1,5 +1,5 @@
 <template>
-  <q-page class="page page--today content flex flex-center">
+  <q-page class="page page--today content">
     <div>
       <img src="../assets/logo.svg" alt="logo" class="logo">
       <div class="date">
@@ -241,7 +241,9 @@ export default {
       let newDate = new Date(d.setDate(d.getDate() - offset))
       let fullYear = newDate.getFullYear().toString()
       let lastDigitsInYear = '' + fullYear[2] + '' + fullYear[3]
-      return `${newDate.getDate()}.${newDate.getMonth() + 1}.${lastDigitsInYear}`
+      let month = newDate.getMonth() + 1 < 10 ? '0' + (newDate.getMonth() + 1) : newDate.getMonth() + 1
+      let day = newDate.getDate() < 10 ? '0' + newDate.getDate() : newDate.getDate()
+      return `${day}.${month}.${lastDigitsInYear}`
     },
     getDateForParams (offset) {
       const d = new Date()
@@ -266,6 +268,12 @@ export default {
 </script>
 
 <style lang="scss">
+  .page--today {
+    padding: 0 20px 20px;
+    min-height: 100vh;
+    min-height: 100dvh;
+    min-height: -webkit-fill-available;
+  }
   .logo {
     display: block;
     max-width: 100%;

@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="lHh Lpr lff">
     <q-page-container>
       <transition name="slide" mode="out-in">
         <router-view :key="updateKey"></router-view>
@@ -112,6 +112,13 @@ export default {
   .footer {
     background-color: $bg-solid-color;
     padding: 8px 15px;
+    /* Footer is part of flex layout - stays at bottom, never scrolls */
+    /* Position is handled by flex layout in general.scss */
+    z-index: 1000 !important;
+    transform: translate3d(0, 0, 0) !important;
+    -webkit-transform: translate3d(0, 0, 0) !important;
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
     &:before {
       content: '';
       display: block;
@@ -152,9 +159,27 @@ export default {
         box-shadow: 0 0 0 60px $bg-solid-color, inset 0 0 6px rgba($shadow-color, .5);
       }
     }
+    .q-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+      width: 100%;
+      padding: 0;
+    }
     &__nav-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       text-align: center;
       text-decoration: none;
+      /* Рівномірний розподіл ширини - кожна кнопка займає однаково */
+      flex: 1 1 0;
+      min-width: 0; /* Дозволяє flex працювати правильно */
+      padding: 4px 2px;
+      /* Prevent movement */
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
       .icon {
         display: flex;
         justify-content: center;
@@ -162,10 +187,11 @@ export default {
         min-width: 28px;
         width: 28px;
         height: 28px;
-        margin: 0 auto;
+        margin: 0 auto 4px;
         border: 1px solid transparent;
         border-radius: 50%;
         transition: border-color .3s ease-in-out;
+        flex-shrink: 0;
       }
       &.router-link-active {
         .icon {
@@ -178,9 +204,12 @@ export default {
       .title {
         @include fnt(300, normal);
         font-size: 10px;
-        line-height: 10px;
+        line-height: 12px;
         color: $primary;
         white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
       }
       img {
         height: auto;

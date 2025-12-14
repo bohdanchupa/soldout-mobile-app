@@ -43,6 +43,17 @@ export default async ({ app, router, store, Vue }) => {
       console.log('📱 window.cordova.plugin:', window.cordova.plugin)
       console.log('📱 window.cordova.plugins:', window.cordova.plugins)
 
+      // Configure StatusBar for full-screen look
+      if (window.StatusBar) {
+        console.log('✅ StatusBar plugin available')
+        window.StatusBar.overlaysWebView(true)
+        window.StatusBar.backgroundColorByHexString('#1C2435')
+        window.StatusBar.styleLightContent()
+        console.log('✅ StatusBar configured: overlays WebView, dark background, light content')
+      } else {
+        console.log('⚠️ StatusBar plugin NOT available')
+      }
+
       if (window.cordova.plugin && window.cordova.plugin.http) {
         console.log('✅ HTTP Plugin available:', window.cordova.plugin.http)
       } else {

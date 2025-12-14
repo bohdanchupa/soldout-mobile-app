@@ -188,7 +188,7 @@ export default {
         for (let i = 0; i < res.data.length; i++) {
           let dateOfBegin = new Date(res.data[i].beginDate)
           let d = dateOfBegin.getDate() < 10 ? '0' + dateOfBegin.getDate() : dateOfBegin.getDate()
-          let m = dateOfBegin.getMonth() + 1 < 10 ? '0' + dateOfBegin.getMonth() : dateOfBegin.getMonth()
+          let m = dateOfBegin.getMonth() + 1 < 10 ? '0' + (dateOfBegin.getMonth() + 1) : dateOfBegin.getMonth() + 1
           let hour = dateOfBegin.getHours() < 10 ? '0' + dateOfBegin.getHours() : dateOfBegin.getHours()
           let min = dateOfBegin.getMinutes() < 10 ? '0' + dateOfBegin.getMinutes() : dateOfBegin.getMinutes()
           this.events.push({
@@ -228,6 +228,10 @@ export default {
 
 <style lang="scss">
   @import '../css/quasar.variables';
+  .page--list-of-events {
+    min-height: 100%;
+    padding-bottom: 20px;
+  }
   .date-filter {
     span {
       display: inline-block;

@@ -1,0 +1,121 @@
+// Design Tokens for Statistics Dashboard
+// 8pt Grid System
+
+// ============================================
+// SPACING (8pt Grid)
+// ============================================
+$space-1: 8px;   // 1 unit
+$space-2: 16px;  // 2 units
+$space-3: 24px;  // 3 units
+$space-4: 32px;  // 4 units
+$space-5: 40px;  // 5 units
+$space-6: 48px;  // 6 units
+
+// Page-level spacing
+$page-padding-x: $space-2;      // 16px horizontal
+$page-padding-y: $space-4;      // 32px vertical
+$section-gap: $space-3;         // 24px between sections
+$card-padding: $space-3;        // 24px inside cards
+
+// Component spacing
+$header-logo-margin-top: $space-4;        // 32px
+$header-title-gap: $space-1;              // 8px
+$kpi-grid-gap: $space-2;                  // 16px
+$kpi-card-padding: $space-3;              // 24px
+
+// ============================================
+// TYPOGRAPHY
+// ============================================
+// Font sizes
+$font-xs: 12px;    // Labels, captions
+$font-sm: 14px;    // Secondary text, card titles
+$font-base: 16px;  // Body, dates
+$font-lg: 20px;    // Large text
+$font-xl: 28px;    // KPI values
+$font-2xl: 36px;   // Primary metric (Продано на суму)
+
+// Font weights (Gotham Pro)
+$font-light: 300;
+$font-normal: 400;
+$font-medium: 500;
+$font-bold: 700;
+
+// Line heights
+$line-height-tight: 1.2;
+$line-height-normal: 1.5;
+$line-height-relaxed: 1.75;
+
+// Typography mixins
+@mixin typography-primary-metric {
+  font-size: $font-2xl;
+  font-weight: $font-light;
+  line-height: $line-height-tight;
+  color: $primary;
+}
+
+@mixin typography-kpi-value {
+  font-size: $font-xl;
+  font-weight: $font-light;
+  line-height: $line-height-tight;
+  color: $primary;
+}
+
+@mixin typography-card-title {
+  font-size: $font-sm;
+  font-weight: $font-normal;
+  line-height: $line-height-normal;
+  color: rgba($primary, 0.8);
+}
+
+@mixin typography-label {
+  font-size: $font-xs;
+  font-weight: $font-normal;
+  line-height: $line-height-normal;
+  color: rgba($primary, 0.6);
+}
+
+// ============================================
+// BORDER RADIUS
+// ============================================
+$radius-sm: 12px;   // Small cards, badges
+$radius-md: 16px;   // Standard cards (default)
+$radius-lg: 20px;   // Large cards, primary metric
+
+// ============================================
+// SHADOWS & ELEVATION
+// ============================================
+$shadow-sm: 0 2px 8px rgba($shadow-color-2, 0.3);
+$shadow-md: 0 4px 16px rgba($shadow-color-2, 0.4);
+$shadow-lg: 0 8px 24px rgba($shadow-color-2, 0.5);
+
+// Card elevation levels
+$card-elevation-1: $shadow-sm;  // KPI cards
+$card-elevation-2: $shadow-md;  // Standard cards
+$card-elevation-3: $shadow-lg;  // Primary metric card
+
+// ============================================
+// COLORS (Dark Theme)
+// ============================================
+// Background layers
+$bg-card: rgba(49, 61, 95, 0.6);        // #313D5F with alpha
+$bg-card-hover: rgba(49, 61, 95, 0.8);
+$bg-card-active: rgba(49, 61, 95, 1);
+
+// Text colors
+$text-primary: #FFFFFF;
+$text-secondary: rgba(255, 255, 255, 0.8);
+$text-tertiary: rgba(255, 255, 255, 0.6);
+$text-disabled: rgba(255, 255, 255, 0.4);
+
+// Accent colors (using existing from quasar.variables)
+// $accent-primary: #FD3363 (from $accent)
+// $accent-secondary: #46C6FF (from $secondary)
+
+// Chart colors
+$chart-color-1: #12BFFF;  // Квитки
+$chart-color-2: #FF608E;  // Замовлено
+$chart-color-3: #66E8CD;  // Сума
+
+// Border colors
+$border-default: rgba(255, 255, 255, 0.1);
+$border-active: rgba(70, 198, 255, 0.5);

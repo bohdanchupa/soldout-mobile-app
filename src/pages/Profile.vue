@@ -1,5 +1,5 @@
 <template>
-  <q-page class="page page--profile content flex flex-center">
+  <q-page class="page page--profile content">
     <q-header class="header">
       <router-link to="/entry">Мій профіль</router-link>
     </q-header>
@@ -42,17 +42,17 @@ export default {
   methods: {
     logout () {
       console.log('🚪 Logging out...')
-      
+
       // Clear Vuex store
       this.$store.dispatch('logout')
-      
+
       // Clear ALL localStorage data
       this.$q.localStorage.remove('userData')
       this.$q.localStorage.remove('savedAuth')
       this.$q.localStorage.remove('rememberMe')
-      
+
       console.log('✓ All saved data cleared')
-      
+
       // Redirect to login
       this.$router.replace('/')
     }
@@ -62,6 +62,10 @@ export default {
 
 <style lang="scss">
   @import '../css/quasar.variables';
+  .page--profile {
+    min-height: 100%;
+    padding: 0 20px 20px;
+  }
   .profile-inf {
     list-style: none;
     margin: 0 auto;

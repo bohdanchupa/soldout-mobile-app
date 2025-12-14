@@ -18,7 +18,7 @@ jobs:
     name: Build TEST APK
     runs-on: ubuntu-latest
     if: github.event.inputs.build_type == 'test' || github.event.inputs.build_type == 'both'
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -29,31 +29,31 @@ jobs:
           cat > Dockerfile.build << 'EOF'
           FROM node:14-alpine
           WORKDIR /app
-          
+
           # Install build tools
           RUN apk add --no-cache python3 make g++ git
-          
+
           # Copy everything
           COPY . .
-          
+
           # Install dependencies (EXACTLY like local Docker that works!)
           RUN npm install --ignore-scripts && rm -rf node_modules/node-sass
-          
+
           # Install src-cordova deps (also with --ignore-scripts)
           RUN cd src-cordova && npm install --ignore-scripts && cd ..
-          
+
           # Build command
           CMD ["sh", "-c", "npx quasar build"]
           EOF
-          
+
           # Build Docker image
           docker build -f Dockerfile.build -t soldout-builder .
-          
+
           # Run build and extract dist folder
           docker run --name temp-builder soldout-builder
           docker cp temp-builder:/app/dist ./dist
           docker rm temp-builder
-          
+
           # Verify dist was created
           ls -la dist/spa/
 
@@ -78,7 +78,7 @@ jobs:
           cp -r dist/spa/* src-cordova/www/
           ls -la src-cordova/www/
 
-      - name: Build Android APK  
+      - name: Build Android APK
         run: |
           cd src-cordova
           # Use Cordova Android 12.x (latest, should support Gradle 9.x)
@@ -102,7 +102,7 @@ jobs:
     name: Build PROD APK
     runs-on: ubuntu-latest
     if: github.event.inputs.build_type == 'prod' || github.event.inputs.build_type == 'both'
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -137,31 +137,31 @@ jobs:
           cat > Dockerfile.build << 'EOF'
           FROM node:14-alpine
           WORKDIR /app
-          
+
           # Install build tools
           RUN apk add --no-cache python3 make g++ git
-          
+
           # Copy everything
           COPY . .
-          
+
           # Install dependencies (EXACTLY like local Docker that works!)
           RUN npm install --ignore-scripts && rm -rf node_modules/node-sass
-          
+
           # Install src-cordova deps (also with --ignore-scripts)
           RUN cd src-cordova && npm install --ignore-scripts && cd ..
-          
+
           # Build command
           CMD ["sh", "-c", "npx quasar build"]
           EOF
-          
+
           # Build Docker image
           docker build -f Dockerfile.build -t soldout-builder .
-          
+
           # Run build and extract dist folder
           docker run --name temp-builder soldout-builder
           docker cp temp-builder:/app/dist ./dist
           docker rm temp-builder
-          
+
           # Verify dist was created
           ls -la dist/spa/
 
@@ -186,7 +186,7 @@ jobs:
           cp -r dist/spa/* src-cordova/www/
           ls -la src-cordova/www/
 
-      - name: Build Android APK  
+      - name: Build Android APK
         run: |
           cd src-cordova
           # Use Cordova Android 12.x (latest, should support Gradle 9.x)

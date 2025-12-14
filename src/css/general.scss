@@ -1,52 +1,143 @@
+@import './quasar.variables';
+
 html, body {
   width: 100%;
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden;
-  position: fixed;
+  /* Dark background extends under safe areas to fill white bars */
+  background: #1C2435 !important;
   overscroll-behavior: none;
+  /* Prevent elastic scroll affecting footer */
   -webkit-overflow-scrolling: touch;
-  /* Remove white bars - extend background under safe areas */
-  background: transparent;
+  /* Prevent body scroll - only q-page-container should scroll */
+  overflow: hidden !important;
 }
 
 #q-app {
   width: 100%;
-  height: 100%;
-  overflow: hidden;
-  position: fixed;
-  top: 0;
-  left: 0;
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height for mobile */
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
   box-sizing: border-box;
   /* Extend under safe areas */
   padding: 0;
+  background: #1C2435 !important;
+  /* Prevent app-level scroll */
+  overflow: hidden !important;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Quasar layout fixes - extend under safe areas */
+/* Quasar layout fixes - app shell with fixed header/footer */
 .q-layout {
-  min-height: 100vh !important;
-  max-height: 100vh !important;
+  /* Fixed height - app shell */
   height: 100vh !important;
+  height: 100dvh !important; /* Dynamic viewport height for mobile */
+  min-height: 100vh !important;
+  min-height: -webkit-fill-available !important;
+  background: #1C2435 !important;
+  overflow: hidden !important; /* Prevent layout scroll */
+  /* Flex container for header/content/footer */
+  display: flex !important;
+  flex-direction: column !important;
+  /* Safe area support - extend background under safe areas */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  /* Note: padding-top/bottom not needed here as header/footer handle their own positioning */
+
+  /* Змінюємо фон layout на градієнт коли є сторінка Entry/Today */
+  &:has(.q-page-container .q-page.page--today),
+  &:has(.q-page-container .q-page.page--statistics) {
+    background-image: $linear_bg_2 !important;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
 }
 
 .q-page-container {
-  /* Content respects safe areas but background extends */
+  /* This is the ONLY scrollable area */
+  flex: 1 1 auto !important;
+  overflow-x: hidden !important;
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch !important;
   box-sizing: border-box;
+  /* Prevent footer from affecting scroll */
+  position: relative !important;
+  /* Ensure proper stacking */
+  z-index: 1;
+  /* Account for fixed footer height */
+  padding-bottom: 0 !important;
+
+  /* Background також застосовується до контейнера для додаткової підтримки */
+  &:has(.q-page.page--today),
+  &:has(.q-page.page--statistics) {
+    background-image: $linear_bg_2 !important;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 100% 100%;
+    background-attachment: fixed;
+  }
+}
+
+.q-page {
+  /* Pages should fill container but allow scrolling */
+  min-height: 100% !important;
+  /* Add bottom padding to prevent content hiding under footer */
+  /* Footer height: ~8px top + ~28px icon + ~4px margin + ~12px text + ~4px nav-link padding + ~8px bottom = ~64px */
+  padding-bottom: calc(64px + env(safe-area-inset-bottom)) !important;
+  padding-top: 0 !important;
+  box-sizing: border-box;
+}
+
+/* Pages with header - add top padding to container to prevent content hiding under fixed header */
+.q-page .header ~ .container {
+  /* Header height: ~38px + safe area */
+  padding-top: calc(38px + env(safe-area-inset-top)) !important;
 }
 
 .q-footer {
+  /* Footer is part of flex layout - stays at bottom, never scrolls */
+  flex: 0 0 auto !important;
+  position: relative !important; /* Changed from fixed - now part of flex layout */
+  width: 100% !important;
+  z-index: 1000 !important;
+  /* Maximum performance optimizations */
+  transform: translate3d(0, 0, 0) !important;
+  -webkit-transform: translate3d(0, 0, 0) !important;
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
   /* Footer extends under home indicator */
   padding-bottom: env(safe-area-inset-bottom) !important;
   padding-left: env(safe-area-inset-left) !important;
   padding-right: env(safe-area-inset-right) !important;
+  /* Ensure footer background extends fully */
+  background-color: #2B3650 !important;
+  /* Additional fixes for iOS */
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: none;
 }
 
 .container {
   padding: 10px 20px;
-  overflow: hidden;
+  overflow: visible;
+}
+
+.q-header {
+  /* Header is fixed to top of viewport - never scrolls */
+  position: fixed !important;
+  top: env(safe-area-inset-top) !important; /* Position below notch */
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 1000 !important;
+  transform: translate3d(0, 0, 0) !important;
+  -webkit-transform: translate3d(0, 0, 0) !important;
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
 }
 
 .header {
@@ -54,12 +145,13 @@ html, body {
   justify-content: space-between;
   align-items: center;
   padding: 10px 25px;
-  /* Add safe area padding for notch */
-  padding-top: calc(10px + env(safe-area-inset-top));
+  /* Safe area padding for left/right only (top handled by q-header position) */
   padding-left: calc(25px + env(safe-area-inset-left));
   padding-right: calc(25px + env(safe-area-inset-right));
   background-color: #2B3650;
   border-bottom: 1px solid #192541;
+  /* Header height: ~10px top + ~18px content + ~10px bottom = ~38px */
+  min-height: 38px;
   a {
     display: inline-block;
     vertical-align: middle;

@@ -304,3 +304,5 @@
 - `epEventDetailsTableForDate` is the **primary endpoint** for price display in "Додаткова інформація1" table
 - The `All_Tickets` element from `epEventDetailsTableForDate` response is used for "Всього" column instead of calculating `totalOf()`
 
+
+
