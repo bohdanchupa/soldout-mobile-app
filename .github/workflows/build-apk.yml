@@ -42,6 +42,11 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
 
+      - name: Setup Gradle 8.5
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 8.5
+
       - name: Install dependencies
         run: |
           # Set ignore-scripts globally to prevent node-sass from building
@@ -187,6 +192,11 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
+
+      - name: Setup Gradle 8.5
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 8.5
 
       - name: Install dependencies
         run: |
