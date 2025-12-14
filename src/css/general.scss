@@ -7,11 +7,8 @@ html, body {
   position: fixed;
   overscroll-behavior: none;
   -webkit-overflow-scrolling: touch;
-  /* Safe area insets for iPhone notch */
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
+  /* Remove white bars - extend background under safe areas */
+  background: transparent;
 }
 
 #q-app {
@@ -21,11 +18,12 @@ html, body {
   position: fixed;
   top: 0;
   left: 0;
-  /* Ensure app respects safe areas */
   box-sizing: border-box;
+  /* Extend under safe areas */
+  padding: 0;
 }
 
-/* Quasar layout fixes */
+/* Quasar layout fixes - extend under safe areas */
 .q-layout {
   min-height: 100vh !important;
   max-height: 100vh !important;
@@ -33,13 +31,17 @@ html, body {
 }
 
 .q-page-container {
-  padding-bottom: env(safe-area-inset-bottom) !important;
+  /* Content respects safe areas but background extends */
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch !important;
+  box-sizing: border-box;
 }
 
 .q-footer {
+  /* Footer extends under home indicator */
   padding-bottom: env(safe-area-inset-bottom) !important;
+  padding-left: env(safe-area-inset-left) !important;
+  padding-right: env(safe-area-inset-right) !important;
 }
 
 .container {
@@ -52,6 +54,10 @@ html, body {
   justify-content: space-between;
   align-items: center;
   padding: 10px 25px;
+  /* Add safe area padding for notch */
+  padding-top: calc(10px + env(safe-area-inset-top));
+  padding-left: calc(25px + env(safe-area-inset-left));
+  padding-right: calc(25px + env(safe-area-inset-right));
   background-color: #2B3650;
   border-bottom: 1px solid #192541;
   a {
