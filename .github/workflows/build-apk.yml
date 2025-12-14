@@ -22,7 +22,7 @@ jobs:
     name: Build TEST APK
     runs-on: ubuntu-latest
     if: github.event_name != 'workflow_dispatch' || github.event.inputs.build_type == 'test' || github.event.inputs.build_type == 'both'
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -55,15 +55,15 @@ jobs:
         run: |
           # Set ignore-scripts globally to prevent node-sass from building
           npm config set ignore-scripts true
-          
+
           # Install main dependencies
           npm install --legacy-peer-deps
           npm install -g cordova@10.0.0
-          
+
           # Forcefully remove node-sass and install sass
           rm -rf node_modules/node-sass
           npm install sass@1.32.0 --save-dev --no-save
-          
+
           # Create a fake node-sass module that redirects to sass
           mkdir -p node_modules/node-sass
           cat > node_modules/node-sass/package.json << 'PKGEOF'
@@ -73,18 +73,18 @@ jobs:
             "main": "../sass/sass.node.js"
           }
           PKGEOF
-          
+
           cat > node_modules/node-sass/index.js << 'INDEXEOF'
           module.exports = require('sass');
           INDEXEOF
-          
+
           echo "✓ node-sass redirected to sass"
-          
+
           # Install src-cordova dependencies (ignore-scripts is already set globally)
           cd src-cordova
           npm install
           cd ..
-          
+
           # Reset npm config to default
           npm config delete ignore-scripts
 
@@ -157,7 +157,7 @@ jobs:
         run: |
           # Ensure TEST environment
           echo "Building TEST APK with TEST API endpoint"
-          
+
           # Build APK
           npx quasar build -m cordova -T android --debug
 
@@ -177,7 +177,7 @@ jobs:
     name: Build PROD APK
     runs-on: ubuntu-latest
     if: github.event_name != 'workflow_dispatch' || github.event.inputs.build_type == 'prod' || github.event.inputs.build_type == 'both'
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -210,15 +210,15 @@ jobs:
         run: |
           # Set ignore-scripts globally to prevent node-sass from building
           npm config set ignore-scripts true
-          
+
           # Install main dependencies
           npm install --legacy-peer-deps
           npm install -g cordova@10.0.0
-          
+
           # Forcefully remove node-sass and install sass
           rm -rf node_modules/node-sass
           npm install sass@1.32.0 --save-dev --no-save
-          
+
           # Create a fake node-sass module that redirects to sass
           mkdir -p node_modules/node-sass
           cat > node_modules/node-sass/package.json << 'PKGEOF'
@@ -228,18 +228,18 @@ jobs:
             "main": "../sass/sass.node.js"
           }
           PKGEOF
-          
+
           cat > node_modules/node-sass/index.js << 'INDEXEOF'
           module.exports = require('sass');
           INDEXEOF
-          
+
           echo "✓ node-sass redirected to sass"
-          
+
           # Install src-cordova dependencies (ignore-scripts is already set globally)
           cd src-cordova
           npm install
           cd ..
-          
+
           # Reset npm config to default
           npm config delete ignore-scripts
 
@@ -335,7 +335,7 @@ jobs:
       - name: Build PROD APK
         run: |
           echo "Building PROD APK with PROD API endpoint"
-          
+
           # Build APK (Quasar handles Cordova setup)
           npx quasar build -m cordova -T android --debug
 
@@ -356,7 +356,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-test-apk, build-prod-apk]
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-    
+    permissions:
+      contents: write
+
     steps:
       - name: Download TEST APK
         uses: actions/download-artifact@v4
@@ -377,11 +379,11 @@ jobs:
           name: Build ${{ github.run_number }}
           body: |
             Automatic build from commit ${{ github.sha }}
-            
+
             **Files:**
             - `soldout-test-debug.apk` - TEST environment
             - `soldout-prod-debug.apk` - PROD environment
-            
+
             **Build Date:** ${{ github.event.head_commit.timestamp }}
           files: |
             apks/soldout-test-debug.apk
