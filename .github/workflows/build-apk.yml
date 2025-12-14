@@ -42,6 +42,10 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
 
+      - name: Install Android Build Tools 32.0.0
+        run: |
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;32.0.0"
+
       - name: Setup Gradle 8.5
         uses: gradle/gradle-build-action@v2
         with:
@@ -192,6 +196,10 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
+
+      - name: Install Android Build Tools 32.0.0
+        run: |
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;32.0.0"
 
       - name: Setup Gradle 8.5
         uses: gradle/gradle-build-action@v2
