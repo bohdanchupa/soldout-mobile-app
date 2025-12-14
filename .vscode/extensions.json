@@ -1,0 +1,24 @@
+{
+  // ========================================
+  // RECOMMENDED EXTENSIONS FOR THIS PROJECT
+  // These extensions enhance the development experience
+  // ========================================
+  "recommendations": [
+    "octref.vetur",                     // Vue.js tooling (syntax, intellisense)
+    "dbaeumer.vscode-eslint",           // ESLint integration (already configured)
+    "vue.volar",                        // Vue 3 language support (future-proof)
+    "editorconfig.editorconfig",        // Code style consistency
+    "christian-kohler.path-intellisense", // Path autocomplete
+    "formulahendry.auto-rename-tag"     // Auto-rename paired HTML/Vue tags
+  ],
+
+  // ========================================
+  // OPTIONAL/HEAVY EXTENSIONS TO DISABLE IF NOT NEEDED
+  // Consider disabling these if you experience performance issues:
+  // - eamodio.gitlens (heavy git features, auto-refresh)
+  // - ms-azuretools.vscode-docker (Docker, only if not using Docker workflows)
+  // - esbenp.prettier-vscode (if not using Prettier)
+  // ========================================
+
+  "unwantedRecommendations": []
+}

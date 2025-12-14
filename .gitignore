@@ -11,7 +11,10 @@ src-cordova/plugins/
 src-cordova/www/
 
 # IDE
-.vscode/
+# Allow .vscode/settings.json and .vscode/extensions.json for team performance settings
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
 .idea/
 *.swp
 *.swo

@@ -1,0 +1,85 @@
+{
+  // ========================================
+  // FILE WATCHER EXCLUSIONS
+  // Prevents VSCode from monitoring changes in these folders
+  // Impact: Reduces CPU usage and file system events significantly
+  // ========================================
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/dist/**": true,
+    "**/.quasar/**": true,
+    "**/builds/**": true,
+    "**/src-cordova/platforms/**": true,
+    "**/src-cordova/plugins/**": true,
+    "**/src-cordova/www/**": true,
+    "**/*.log": true,
+    "**/package-lock.json": true,
+    "**/src-cordova/package-lock.json": true
+  },
+
+  // ========================================
+  // SEARCH EXCLUSIONS
+  // Excludes folders from global search (Ctrl+Shift+F)
+  // Impact: Faster search, less memory usage, more relevant results
+  // ========================================
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.quasar": true,
+    "**/builds": true,
+    "**/src-cordova/platforms": true,
+    "**/src-cordova/plugins": true,
+    "**/src-cordova/www": true,
+    "**/*.log": true,
+    "**/package-lock.json": true,
+    "**/src-cordova/package-lock.json": true
+  },
+
+  // ========================================
+  // GIT PERFORMANCE
+  // Reduces git status checks and auto-fetch operations
+  // Impact: Less CPU spikes from git operations
+  // ========================================
+  "git.autorefresh": false,
+  "git.autofetch": false,
+  "git.decorations.enabled": true,
+  "git.enabled": true,
+
+  // ========================================
+  // JAVASCRIPT/TYPESCRIPT PERFORMANCE
+  // Prevents TS server from indexing build artifacts
+  // Impact: Lower memory usage for language services
+  // ========================================
+  "javascript.suggest.paths": false,
+  "typescript.suggest.paths": false,
+  "typescript.disableAutomaticTypeAcquisition": true,
+
+  // ========================================
+  // ESLINT PERFORMANCE
+  // Only lint files in src/, avoid generated code
+  // Impact: Faster linting, less CPU on file changes
+  // ========================================
+  "eslint.workingDirectories": [
+    { "pattern": "./src" }
+  ],
+
+  // ========================================
+  // GENERAL EDITOR PERFORMANCE
+  // Optimizations for better responsiveness
+  // ========================================
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "editor.minimap.enabled": false,
+  "editor.suggest.preview": false,
+  "editor.quickSuggestionsDelay": 100,
+
+  // ========================================
+  // FILE ASSOCIATIONS
+  // Helps VSCode understand file types correctly
+  // ========================================
+  "files.associations": {
+    "*.vue": "vue"
+  }
+}
