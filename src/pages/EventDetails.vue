@@ -8,7 +8,7 @@
         {{eventTitle}}
         <div class="flex mt-1">
           <span>{{eventDate}}. {{eventTime}}</span>
-          <span>Організатор:: <b>{{eventOrganisator}}</b></span>
+          <span>Організатор: <b>{{eventOrganisator}}</b></span>
         </div>
       </a>
     </q-header>
@@ -55,6 +55,14 @@
               <stop offset="0%"   stop-color="#1CFFD0"/>
               <stop offset="100%" stop-color="#1DEEFF"/>
             </linearGradient>
+            <linearGradient id="linear-5" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%"   stop-color="#7B8AA1"/>
+              <stop offset="100%" stop-color="#9CAAD1"/>
+            </linearGradient>
+            <linearGradient id="linear-6" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%"   stop-color="#FFB169"/>
+              <stop offset="100%" stop-color="#FF7A4D"/>
+            </linearGradient>
           </defs>
           <circle v-for="(circ, index) in detailInf[activeTabIndex]" :key="index"
                   v-show="circ.percents > 0"
@@ -69,18 +77,18 @@
       </div>
       <div class="chart-legend" :class="{ 'chart-legend--general': isGeneral }">
         <ul>
-          <li class="cash_register">
-            <h4>Каса:</h4>
+          <li class="online">
+            <h4>Онлайн:</h4>
             <h3>
-              <span>{{detailInf[activeTabIndex].cash_register.val | thousant}}</span> {{activeTabIndex === 0 ? 'грн' : 'штук'}}
-              <span>{{detailInf[activeTabIndex].cash_register.percents || 0}} %</span>
+              <span>{{detailInf[activeTabIndex].online.val | thousant}}</span> {{activeTabIndex === 0 ? 'грн' : 'штук'}}
+              <span>{{detailInf[activeTabIndex].online.percents}} %</span>
             </h3>
           </li>
-          <li class="invitations">
-            <h4>Запрошень:</h4>
+          <li class="offline">
+            <h4>Офлайн:</h4>
             <h3>
-              <span>{{detailInf[activeTabIndex].invitations.val | thousant}}</span> {{activeTabIndex === 0 ? 'грн' : 'штук'}}
-              <span>{{detailInf[activeTabIndex].invitations.percents}} %</span>
+              <span>{{detailInf[activeTabIndex].offline.val | thousant}}</span> {{activeTabIndex === 0 ? 'грн' : 'штук'}}
+              <span>{{detailInf[activeTabIndex].offline.percents}} %</span>
             </h3>
           </li>
           <li class="reserved">
@@ -90,20 +98,25 @@
               <span>{{detailInf[activeTabIndex].reserved.percents}} %</span>
             </h3>
           </li>
-        </ul>
-        <ul>
-          <li class="online">
-            <h4>Онлайн:</h4>
+          <li class="invitations">
+            <h4>Запрошень:</h4>
             <h3>
-              <span>{{detailInf[activeTabIndex].online.val | thousant}}</span> {{activeTabIndex === 0 ? 'грн' : 'штук'}}
-              <span>{{detailInf[activeTabIndex].online.percents}} %</span>
+              <span>{{detailInf[activeTabIndex].invitations.val | thousant}}</span> {{activeTabIndex === 0 ? 'грн' : 'штук'}}
+              <span>{{detailInf[activeTabIndex].invitations.percents}} %</span>
             </h3>
           </li>
-          <li class="not_sold">
-            <h4>Офлайн:</h4>
+          <li class="cash_register">
+            <h4>Службових:</h4>
             <h3>
-              <span>{{detailInf[activeTabIndex].offline.val | thousant}}</span> {{activeTabIndex === 0 ? 'грн' : 'штук'}}
-              <span>{{detailInf[activeTabIndex].offline.percents}} %</span>
+              <span>{{detailInf[activeTabIndex].cash_register.val | thousant}}</span> {{activeTabIndex === 0 ? 'грн' : 'штук'}}
+              <span>{{detailInf[activeTabIndex].cash_register.percents || 0}} %</span>
+            </h3>
+          </li>
+          <li class="returned">
+            <h4>Повернено:</h4>
+            <h3>
+              <span>{{detailInf[activeTabIndex].returned.val | thousant}}</span> {{activeTabIndex === 0 ? 'грн' : 'штук'}}
+              <span>{{detailInf[activeTabIndex].returned.percents}} %</span>
             </h3>
           </li>
         </ul>
@@ -130,20 +143,34 @@
               </tr>
               <tr>
                 <td>Ціна квитка:</td>
-                <td><b>{{allTicketsData ? allTicketsData.price : '-'}}</b> грн</td>
+                <td></td>
                 <td v-for="(inf, index) in tableInf.prices" :key="index">
                   <b>{{inf !== undefined && inf !== null ? inf : '-'}}</b> грн
                 </td>
               </tr>
               <tr>
                 <td>Квота, шт.</td>
+                <td><b>{{allTicketsData ? allTicketsData.createdTickets : '-'}}</b></td>
+                <td v-for="(inf, index) in tableInf.createdTickets" :key="index">
+                  <b>{{inf !== undefined && inf !== null ? inf : '-'}}</b>
+                </td>
+              </tr>
+              <tr>
+                <td>Квота на суму</td>
+                <td><b>{{allTicketsData ? allTicketsData.createdTicketsSum : '-'}}</b></td>
+                <td v-for="(inf, index) in tableInf.createdTicketsSum" :key="index">
+                  <b>{{inf !== undefined && inf !== null ? inf : '-'}}</b>
+                </td>
+              </tr>
+              <tr>
+                <td>Доступно, шт.</td>
                 <td><b>{{allTicketsData ? allTicketsData.quantity : '-'}}</b></td>
                 <td v-for="(inf, index) in tableInf.quantity" :key="index">
                   <b>{{inf !== undefined && inf !== null ? inf : '-'}}</b>
                 </td>
               </tr>
               <tr>
-                <td>Квота на суму</td>
+                <td>Доступно на суму</td>
                 <td><b>{{allTicketsData ? allTicketsData.quantityOfSum : '-'}}</b></td>
                 <td v-for="(inf, index) in tableInf.quantityOfSum" :key="index">
                   <b>{{inf !== undefined && inf !== null ? inf : '-'}}</b>
@@ -202,28 +229,34 @@
           <div class="panel__content">
             <table>
               <tr>
-                <td>Всього квитків:</td>
-                <td><b>{{allTicketsData ? allTicketsData.quantity : '-'}}</b></td>
+                <td>Квота, шт.:</td>
+                <td><b>{{allTicketsData ? allTicketsData.createdTickets : '-'}}</b></td>
                 <td>На суму:</td>
-                <td><b>{{allTicketsData ? allTicketsData.quantityOfSum : '-'}}</b></td>
+                <td><b>{{allTicketsData ? allTicketsData.createdTicketsSum : '-'}}</b></td>
               </tr>
               <tr>
-                <td>Доступно квитків:</td>
-                <td><b>{{allTicketsData ? (allTicketsData.quantity - allTicketsData.solded) : '-'}}</b></td>
+                <td>Доступно, шт.:</td>
+                <td><b>{{allTicketsData ? allTicketsData.availableTickets : '-'}}</b></td>
                 <td>На суму:</td>
-                <td><b>{{allTicketsData ? (allTicketsData.quantityOfSum - allTicketsData.soldedOfSum) : '-'}}</b></td>
+                <td><b>{{allTicketsData ? allTicketsData.availableTicketsSum : '-'}}</b></td>
               </tr>
               <tr>
-                <td>Заброньовано:</td>
-                <td><b>{{allTicketsData ? allTicketsData.reserved : '-'}}</b></td>
+                <td>Запрошення, шт:</td>
+                <td><b>{{allTicketsData ? allTicketsData.invitations : '-'}}</b></td>
                 <td>На суму:</td>
-                <td><b>{{allTicketsData ? allTicketsData.reservedOfSum : '-'}}</b></td>
+                <td><b>{{allTicketsData ? allTicketsData.invitationsOfSum : '-'}}</b></td>
               </tr>
               <tr>
-                <td>Продано:</td>
+                <td>Продано, шт:</td>
                 <td><b>{{allTicketsData ? allTicketsData.solded : '-'}}</b></td>
                 <td>На суму:</td>
                 <td><b>{{allTicketsData ? allTicketsData.soldedOfSum : '-'}}</b></td>
+              </tr>
+              <tr>
+                <td>Заброньовано, шт:</td>
+                <td><b>{{allTicketsData ? allTicketsData.reserved : '-'}}</b></td>
+                <td>На суму:</td>
+                <td><b>{{allTicketsData ? allTicketsData.reservedOfSum : '-'}}</b></td>
               </tr>
             </table>
           </div>
@@ -235,7 +268,7 @@
 
 <script>
 // eslint-disable-next-line no-unused-vars
-import { epEventDetailsTable, epEventInCount, epEventInSum, epEvents, epEventSoldShortInfo, epEventDetailsTableForDate } from '../api/endpoints'
+import { epEventInCount, epEventInSum, epEvents, epEventSoldShortInfo, epEventDetailsTableForDate } from '../api/endpoints'
 
 let lastAngleInPercents = 0
 export default {
@@ -266,58 +299,20 @@ export default {
       showChart: false,
       detailInf: [
         {
-          cash_register: {
-            id: 'cash_register',
-            val: 0,
-            percents: 0
-          },
-          invitations: {
-            id: 'invitations',
-            val: 0,
-            percents: 0
-          },
-          reserved: {
-            id: 'reserved',
-            val: 0,
-            percents: 0
-          },
-          online: {
-            id: 'online',
-            val: 0,
-            percents: 0
-          },
-          offline: {
-            id: 'offline',
-            val: 0,
-            percents: 0
-          }
+          online: { id: 'online', val: 0, percents: 0 },
+          offline: { id: 'offline', val: 0, percents: 0 },
+          reserved: { id: 'reserved', val: 0, percents: 0 },
+          invitations: { id: 'invitations', val: 0, percents: 0 },
+          cash_register: { id: 'cash_register', val: 0, percents: 0 },
+          returned: { id: 'returned', val: 0, percents: 0 }
         },
         {
-          cash_register: {
-            id: 'cash_register',
-            val: 0,
-            percents: 0
-          },
-          invitations: {
-            id: 'invitations',
-            val: 0,
-            percents: 0
-          },
-          reserved: {
-            id: 'reserved',
-            val: 0,
-            percents: 0
-          },
-          online: {
-            id: 'online',
-            val: 0,
-            percents: 0
-          },
-          offline: {
-            id: 'offline',
-            val: 0,
-            percents: 0
-          }
+          online: { id: 'online', val: 0, percents: 0 },
+          offline: { id: 'offline', val: 0, percents: 0 },
+          reserved: { id: 'reserved', val: 0, percents: 0 },
+          invitations: { id: 'invitations', val: 0, percents: 0 },
+          cash_register: { id: 'cash_register', val: 0, percents: 0 },
+          returned: { id: 'returned', val: 0, percents: 0 }
         }
       ],
       tableInf: {
@@ -325,6 +320,8 @@ export default {
         prices: [],
         quantity: [],
         quantityOfSum: [],
+        createdTickets: [],
+        createdTicketsSum: [],
         invitations: [],
         invitationsOfSum: [],
         solded: [],
@@ -359,6 +356,9 @@ export default {
         dateTo: d.getFullYear() + '-' + month + '-' + day + 'T23:59:59'
       }
     }
+    const percentOf = (value, total) => {
+      return total > 0 ? ((+value * 100 / +total).toFixed(2)) : 0
+    }
     this.$axios({
       methods: 'get',
       url: epEventInSum + '/' + this.idOfEvent,
@@ -367,19 +367,31 @@ export default {
         'Authorization': 'Bearer  ' + this.$store.getters.getAccessToken
       }
     }).then((res) => {
-      this.currentCurrency = res.data.allTicketSum
-      this.totalCurrency = res.data.allTicketSum + res.data.notSoldTicketSum
-      this.totalCurrencyPercents = (+this.currentCurrency * 100 / +this.totalCurrency).toFixed(2)
-      this.detailInf[0].offline.val = res.data.offlineTicketSum
-      this.detailInf[0].offline.percents = isNaN((+res.data.offlineTicketSum * 100 / +this.currentCurrency).toFixed(2)) ? 0 : (+res.data.offlineTicketSum * 100 / +this.currentCurrency).toFixed(2)
-      this.detailInf[0].online.val = res.data.onlineTicketSum
-      this.detailInf[0].online.percents = isNaN((+res.data.onlineTicketSum * 100 / +this.currentCurrency).toFixed(2)) ? 0 : (+res.data.onlineTicketSum * 100 / +this.currentCurrency).toFixed(2)
-      this.detailInf[0].invitations.val = res.data.inviteTicketSum
-      this.detailInf[0].invitations.percents = isNaN((+res.data.inviteTicketSum * 100 / +this.currentCurrency).toFixed(2)) ? 0 : (+res.data.inviteTicketSum * 100 / +this.currentCurrency).toFixed(2)
-      this.detailInf[0].reserved.val = res.data.bookedTicketSum
-      this.detailInf[0].reserved.percents = isNaN((+res.data.bookedTicketSum * 100 / +this.currentCurrency).toFixed(2)) ? 0 : (+res.data.bookedTicketSum * 100 / +this.currentCurrency).toFixed(2)
-      this.detailInf[0].cash_register.val = res.data.hardLockedTicketSum
-      this.detailInf[0].cash_register.percents = isNaN((+res.data.hardLockedTicketSum * 100 / +this.currentCurrency).toFixed(2)) ? 0 : (+res.data.hardLockedTicketSum * 100 / +this.currentCurrency).toFixed(2)
+      const offlineTicketSum = +res.data.offlineTicketSum || 0
+      const onlineTicketSum = +res.data.onlineTicketSum || 0
+      const bookedTicketSum = +res.data.bookedTicketSum || 0
+      const inviteTicketSum = +res.data.inviteTicketSum || 0
+      const hardLockedTicketSum = +res.data.hardLockedTicketSum || 0
+      const returnedTicketSum = +res.data.returnedTicketSum || 0
+      const totalSegmentsSum = offlineTicketSum + onlineTicketSum + bookedTicketSum + inviteTicketSum + hardLockedTicketSum + returnedTicketSum
+
+      // Всього продано (офлайн + онлайн) — те що на колі
+      this.currentCurrency = onlineTicketSum + offlineTicketSum
+      this.totalCurrency = this.currentCurrency
+      this.totalCurrencyPercents = percentOf(this.currentCurrency, this.totalCurrency)
+
+      this.detailInf[0].offline.val = offlineTicketSum
+      this.detailInf[0].offline.percents = percentOf(offlineTicketSum, totalSegmentsSum)
+      this.detailInf[0].online.val = onlineTicketSum
+      this.detailInf[0].online.percents = percentOf(onlineTicketSum, totalSegmentsSum)
+      this.detailInf[0].invitations.val = inviteTicketSum
+      this.detailInf[0].invitations.percents = percentOf(inviteTicketSum, totalSegmentsSum)
+      this.detailInf[0].reserved.val = bookedTicketSum
+      this.detailInf[0].reserved.percents = percentOf(bookedTicketSum, totalSegmentsSum)
+      this.detailInf[0].cash_register.val = hardLockedTicketSum
+      this.detailInf[0].cash_register.percents = percentOf(hardLockedTicketSum, totalSegmentsSum)
+      this.detailInf[0].returned.val = returnedTicketSum
+      this.detailInf[0].returned.percents = percentOf(returnedTicketSum, totalSegmentsSum)
       this.$axios({
         methods: 'get',
         url: epEventInCount + '/' + this.idOfEvent,
@@ -388,23 +400,30 @@ export default {
           'Authorization': 'Bearer  ' + this.$store.getters.getAccessToken
         }
       }).then((res) => {
-        if (this.$route.params.isToday === 'true') {
-          this.currentQuantity = res.data.allBoughtTicketCount
-        } else {
-          this.currentQuantity = res.data.allTicketCount - res.data.notSoldTicketCount
-        }
-        this.totalQuantity = res.data.allTicketCount
-        this.totalQuantityPercents = (this.currentQuantity * 100 / this.totalQuantity).toFixed(2)
-        this.detailInf[1].offline.val = res.data.offlineTicketCount
-        this.detailInf[1].offline.percents = (res.data.offlineTicketCount * 100 / this.currentQuantity).toFixed(2)
-        this.detailInf[1].online.val = res.data.onlineTicketCount
-        this.detailInf[1].online.percents = (res.data.onlineTicketCount * 100 / this.currentQuantity).toFixed(2)
-        this.detailInf[1].invitations.val = res.data.inviteTicketCount
-        this.detailInf[1].invitations.percents = (res.data.inviteTicketCount * 100 / this.currentQuantity).toFixed(2)
-        this.detailInf[1].reserved.val = res.data.bookedTicketCount
-        this.detailInf[1].reserved.percents = (res.data.bookedTicketCount * 100 / this.currentQuantity).toFixed(2)
-        this.detailInf[1].cash_register.val = res.data.hardLockedTicketCount
-        this.detailInf[1].cash_register.percents = (res.data.hardLockedTicketCount * 100 / this.currentQuantity).toFixed(2)
+        const offlineTicketCount = +res.data.offlineTicketCount || 0
+        const onlineTicketCount = +res.data.onlineTicketCount || 0
+        const bookedTicketCount = +res.data.bookedTicketCount || 0
+        const inviteTicketCount = +res.data.inviteTicketCount || 0
+        const hardLockedTicketCount = +res.data.hardLockedTicketCount || 0
+        const returnedTicketCount = +res.data.returnedTicketCount || 0
+        const totalSegmentsCount = offlineTicketCount + onlineTicketCount + bookedTicketCount + inviteTicketCount + hardLockedTicketCount + returnedTicketCount
+
+        this.currentQuantity = onlineTicketCount + offlineTicketCount
+        this.totalQuantity = this.currentQuantity
+        this.totalQuantityPercents = percentOf(this.currentQuantity, this.totalQuantity)
+
+        this.detailInf[1].offline.val = offlineTicketCount
+        this.detailInf[1].offline.percents = percentOf(offlineTicketCount, totalSegmentsCount)
+        this.detailInf[1].online.val = onlineTicketCount
+        this.detailInf[1].online.percents = percentOf(onlineTicketCount, totalSegmentsCount)
+        this.detailInf[1].invitations.val = inviteTicketCount
+        this.detailInf[1].invitations.percents = percentOf(inviteTicketCount, totalSegmentsCount)
+        this.detailInf[1].reserved.val = bookedTicketCount
+        this.detailInf[1].reserved.percents = percentOf(bookedTicketCount, totalSegmentsCount)
+        this.detailInf[1].cash_register.val = hardLockedTicketCount
+        this.detailInf[1].cash_register.percents = percentOf(hardLockedTicketCount, totalSegmentsCount)
+        this.detailInf[1].returned.val = returnedTicketCount
+        this.detailInf[1].returned.percents = percentOf(returnedTicketCount, totalSegmentsCount)
         if (this.isGeneral) {
           this.$axios({
             methods: 'get',
@@ -452,106 +471,175 @@ export default {
         }
       })
     })
+    const apiUrl = epEventDetailsTableForDate + '/' + this.idOfEvent
+    console.log('🔗 API URL:', apiUrl)
+    console.log('📅 API Params:', params)
+    console.log('🆔 Event ID:', this.idOfEvent)
+    
     this.$axios({
       methods: 'get',
-      url: epEventDetailsTableForDate + '/' + this.idOfEvent,
+      url: apiUrl,
       params: params,
       headers: {
         'Authorization': 'Bearer  ' + this.$store.getters.getAccessToken
       }
     }).then((res) => {
+      console.log('📊 API Response for event details table:', res.data)
+      console.log('📊 API Response FULL DATA (stringified):', JSON.stringify(res.data, null, 2))
+      
       // Знаходимо елемент "All_Tickets" для колонки "Всього"
       let allTicketsItem = null
       for (let i = 0; i < res.data.length; i++) {
         if (res.data[i].color === 'All_Tickets') {
           allTicketsItem = res.data[i]
+          console.log('📋 All_Tickets item:', allTicketsItem)
+          console.log('📋 All_Tickets FULL KEYS:', Object.keys(allTicketsItem))
+          console.log('📋 All_Tickets createdTickets value:', allTicketsItem.createdTickets, 'type:', typeof allTicketsItem.createdTickets)
+          console.log('📋 All_Tickets createdTicketsSum value:', allTicketsItem.createdTicketsSum, 'type:', typeof allTicketsItem.createdTicketsSum)
           break
         }
       }
       
-      // Зберігаємо дані "All_Tickets"
+      // Зберігаємо дані "All_Tickets" для колонки "Всього"
       if (allTicketsItem) {
         this.allTicketsData = {
           price: +allTicketsItem.price || 0,
+          // КВОТА: createdTickets - загальна кількість створених квитків (квота)
+          createdTickets: +allTicketsItem.createdTickets || 0,
+          createdTicketsSum: +allTicketsItem.createdTicketsSum || 0,
+          // ДОСТУПНО: availableTickets - квитки доступні для продажу
+          availableTickets: +allTicketsItem.availableTickets || 0,
+          availableTicketsSum: +allTicketsItem.availableTicketsSum || 0,
           quantity: +allTicketsItem.availableTickets || 0,
           quantityOfSum: +allTicketsItem.availableTicketsSum || 0,
+          // ЗАПРОШЕННЯ
           invitations: +allTicketsItem.inviteTickets || 0,
           invitationsOfSum: +allTicketsItem.inviteTicketsSum || 0,
+          // ПРОДАНО
           solded: +allTicketsItem.soldTickets || 0,
           soldedOfSum: +allTicketsItem.soldTicketsSum || 0,
+          // ЗАБРОНЬОВАНО
           reserved: +allTicketsItem.bookedTickets || 0,
           reservedOfSum: +allTicketsItem.bookedTicketsSum || 0
         }
-      }
+      } else {
+        // Якщо "All_Tickets" немає, підсумовуємо всі дані з масиву (fallback)
+        let totalCreatedTickets = 0      // КВОТА
+        let totalCreatedTicketsSum = 0
+        let totalAvailableTickets = 0    // ДОСТУПНО
+        let totalAvailableTicketsSum = 0
+        let totalInviteTickets = 0
+        let totalInviteTicketsSum = 0
+        let totalSoldTickets = 0
+        let totalSoldTicketsSum = 0
+        let totalBookedTickets = 0
+        let totalBookedTicketsSum = 0
 
-      // Спочатку отримуємо дані з квотами
-      this.$axios({
-        methods: 'get',
-        url: epEventDetailsTable + '/' + this.idOfEvent,
-        headers: {
-          'Authorization': 'Bearer  ' + this.$store.getters.getAccessToken
-        }
-      }).then((quotaRes) => {
-        // Створюємо мапу квот за кольором для швидкого пошуку
-        const quotaMap = {}
-        for (let i = 0; i < quotaRes.data.length; i++) {
-          const item = quotaRes.data[i]
-          // Пропускаємо "All_Tickets" - він не є окремим типом квитка
-          if (item.color === 'All_Tickets') {
-            continue
-          }
-          quotaMap[item.color] = {
-            quantity: +item.availableTickets,
-            price: +item.price,
-            quantityOfSum: +item.availableTickets * +item.price
-          }
-        }
-
-        // Очищаємо всі масиви
-        this.tableInf.colors = []
-        this.tableInf.quantityOfSum = []
-        this.tableInf.prices = []
-        this.tableInf.quantity = []
-        this.tableInf.invitations = []
-        this.tableInf.invitationsOfSum = []
-        this.tableInf.reserved = []
-        this.tableInf.reservedOfSum = []
-        this.tableInf.soldedOfSum = []
-        this.tableInf.solded = []
-
-        // Заповнюємо дані, синхронізуючи за кольором (виключаємо "All_Tickets")
         for (let i = 0; i < res.data.length; i++) {
           const item = res.data[i]
-          const color = item.color
-          
-          // Пропускаємо "All_Tickets" - він використовується тільки для колонки "Всього"
-          if (color === 'All_Tickets') {
-            continue
-          }
-          
-          this.tableInf.colors.push(color)
-          this.tableInf.invitations.push(+item.inviteTickets || 0)
-          this.tableInf.invitationsOfSum.push(+item.inviteTicketsSum || 0)
-          this.tableInf.reserved.push(+item.bookedTickets || 0)
-          this.tableInf.reservedOfSum.push(+item.bookedTicketsSum || 0)
-          this.tableInf.solded.push(+item.soldTickets || 0)
-          this.tableInf.soldedOfSum.push(+item.soldTicketsSum || 0)
-
-          // Синхронізуємо квоти за кольором
-          if (quotaMap[color]) {
-            this.tableInf.quantity.push(quotaMap[color].quantity)
-            this.tableInf.prices.push(quotaMap[color].price)
-            this.tableInf.quantityOfSum.push(quotaMap[color].quantityOfSum)
-          } else {
-            // Якщо квоти немає для цього кольору, використовуємо дані з першого API або 0
-            const price = +item.price || 0
-            const quantity = 0 // Якщо немає в quotaMap, встановлюємо 0
-            this.tableInf.quantity.push(quantity)
-            this.tableInf.prices.push(price)
-            this.tableInf.quantityOfSum.push(quantity * price)
+          if (item.color !== 'All_Tickets') {
+            totalCreatedTickets += (+item.createdTickets || 0)      // КВОТА
+            totalCreatedTicketsSum += (+item.createdTicketsSum || 0)
+            totalAvailableTickets += (+item.availableTickets || 0)  // ДОСТУПНО
+            totalAvailableTicketsSum += (+item.availableTicketsSum || 0)
+            totalInviteTickets += (+item.inviteTickets || 0)
+            totalInviteTicketsSum += (+item.inviteTicketsSum || 0)
+            totalSoldTickets += (+item.soldTickets || 0)
+            totalSoldTicketsSum += (+item.soldTicketsSum || 0)
+            totalBookedTickets += (+item.bookedTickets || 0)
+            totalBookedTicketsSum += (+item.bookedTicketsSum || 0)
           }
         }
+
+        this.allTicketsData = {
+          price: 0,
+          // КВОТА: загальна кількість створених квитків
+          createdTickets: totalCreatedTickets,
+          createdTicketsSum: totalCreatedTicketsSum,
+          // ДОСТУПНО: квитки доступні для продажу
+          availableTickets: totalAvailableTickets,
+          availableTicketsSum: totalAvailableTicketsSum,
+          quantity: totalAvailableTickets,
+          quantityOfSum: totalAvailableTicketsSum,
+          invitations: totalInviteTickets,
+          invitationsOfSum: totalInviteTicketsSum,
+          solded: totalSoldTickets,
+          soldedOfSum: totalSoldTicketsSum,
+          reserved: totalBookedTickets,
+          reservedOfSum: totalBookedTicketsSum
+        }
+      }
+
+      // Очищаємо всі масиви
+      this.tableInf.colors = []
+      this.tableInf.quantityOfSum = []
+      this.tableInf.prices = []
+      this.tableInf.quantity = []
+      this.tableInf.createdTickets = []
+      this.tableInf.createdTicketsSum = []
+      this.tableInf.invitations = []
+      this.tableInf.invitationsOfSum = []
+      this.tableInf.reserved = []
+      this.tableInf.reservedOfSum = []
+      this.tableInf.soldedOfSum = []
+      this.tableInf.solded = []
+
+      // Заповнюємо дані з epEventDetailsTableForDate (виключаємо "All_Tickets")
+      for (let i = 0; i < res.data.length; i++) {
+        const item = res.data[i]
+        const color = item.color
+        
+        // Пропускаємо "All_Tickets" - він використовується тільки для колонки "Всього"
+        if (color === 'All_Tickets') {
+          continue
+        }
+        
+        console.log(`🎨 Processing color ${color}:`)
+        console.log(`   📦 Full item keys:`, Object.keys(item))
+        console.log(`   ⭐ createdTickets:`, item.createdTickets, `(type: ${typeof item.createdTickets})`)
+        console.log(`   ⭐ createdTicketsSum:`, item.createdTicketsSum, `(type: ${typeof item.createdTicketsSum})`)
+        console.log(`   ✅ availableTickets:`, item.availableTickets, `(type: ${typeof item.availableTickets})`)
+        console.log(`   ✅ availableTicketsSum:`, item.availableTicketsSum, `(type: ${typeof item.availableTicketsSum})`)
+        console.log(`   📋 Full item:`, JSON.stringify(item, null, 2))
+        
+        this.tableInf.colors.push(color)
+        this.tableInf.prices.push(+item.price || 0)
+        
+        // ⭐ КВОТА: createdTickets - загальна кількість створених квитків (квота)
+        // Джерело: epEventDetailsTableForDate поле createdTickets
+        const createdTickets = +item.createdTickets || 0
+        const createdTicketsSum = +item.createdTicketsSum || 0
+        this.tableInf.createdTickets.push(createdTickets)
+        this.tableInf.createdTicketsSum.push(createdTicketsSum)
+        
+        // ⭐ ДОСТУПНО: availableTickets - квитки доступні для продажу
+        // Джерело: epEventDetailsTableForDate поле availableTickets
+        this.tableInf.quantity.push(+item.availableTickets || 0)
+        this.tableInf.quantityOfSum.push(+item.availableTicketsSum || 0)
+        
+        // Інші дані: запрошення, заброньовані, продані
+        this.tableInf.invitations.push(+item.inviteTickets || 0)
+        this.tableInf.invitationsOfSum.push(+item.inviteTicketsSum || 0)
+        this.tableInf.reserved.push(+item.bookedTickets || 0)
+        this.tableInf.reservedOfSum.push(+item.bookedTicketsSum || 0)
+        this.tableInf.solded.push(+item.soldTickets || 0)
+        this.tableInf.soldedOfSum.push(+item.soldTicketsSum || 0)
+      }
+      
+      console.log('✅ Final QUOTA (createdTickets):', this.tableInf.createdTickets)
+      console.log('✅ Final QUOTA SUM (createdTicketsSum):', this.tableInf.createdTicketsSum)
+      console.log('✅ Final AVAILABLE (quantity):', this.tableInf.quantity)
+      console.log('✅ Final AVAILABLE SUM (quantityOfSum):', this.tableInf.quantityOfSum)
+      console.log('✅ Final allTicketsData:', this.allTicketsData)
+    }).catch((err) => {
+      console.error('❌ ERROR loading event details table:', err)
+      console.error('❌ ERROR details:', {
+        status: err.response?.status,
+        data: err.response?.data,
+        url: err.config?.url,
+        params: err.config?.params
       })
+      this.$store.dispatch('fetchingData', { isFetching: false })
     })
   },
   computed: {
@@ -783,6 +871,9 @@ export default {
         &.offline {
           stroke: $primary;
         }
+        &.returned {
+          stroke: url(#linear-6);
+        }
       }
     }
     h2 {
@@ -796,136 +887,79 @@ export default {
     }
   }
   .chart-legend {
-    display: flex;
-    justify-content: space-between;
+    width: 100%;
+    max-width: 420px;
     margin: 30px auto 0;
-    width: 300px;
     ul {
       list-style: none;
       margin: 0;
       padding: 0;
-      &:last-child {
-        li {
-          text-align: right;
-          h3 {
-            &:before {
-              left: 100%;
-              right: auto;
-              margin-right: 0;
-              margin-left: 8px;
-            }
-          }
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px 20px;
+    }
+    li {
+      display: block;
+      color: $primary;
+      text-align: center;
+      h4 {
+        @include fnt(300, normal);
+        font-size: 12px;
+        line-height: 12px;
+        margin: 0 0 4px;
+        padding: 0;
+        text-align: center;
+      }
+      h3 {
+        @include fnt(500, normal);
+        font-size: 11px;
+        line-height: 14px;
+        margin: 0;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        span {
+          font-size: 14px;
+        }
+        &:before {
+          content: '';
+          display: inline-block;
+          width: 10px;
+          height: 9px;
+          border: 1px solid $primary;
+          border-radius: 3px;
+          flex-shrink: 0;
         }
       }
-      li {
-        display: block;
-        color: $primary;
-        margin-bottom: 20px;
-        &:last-child {
-          margin-bottom: 0;
-        }
-        h4 {
-          @include fnt(300, normal);
-          font-size: 12px;
-          line-height: 12px;
-          margin: 0 0 4px;
-          padding: 0;
-        }
-        h3 {
-          @include fnt(500, normal);
-          font-size: 11px;
-          line-height: 14px;
-          margin: 0;
-          padding: 0;
-          position: relative;
-          span {
-            font-size: 14px;
-          }
-          &:before {
-            content: '';
-            display: block;
-            width: 10px;
-            height: 9px;
-            border: 1px solid $primary;
-            border-radius: 3px;
-            position: absolute;
-            right: 100%;
-            bottom: 4px;
-            margin-right: 8px;
-          }
-        }
-        &.cash_register {
-          h3 {
-            &:before {
-              border-color: #FC93B1;
-              box-shadow: 0 3px 10px rgba(#FC93B1, .7);
-            }
-          }
-        }
-        &.invitations {
-          h3 {
-            &:before {
-              border-color: #26BCFF;
-              box-shadow: 0 3px 10px rgba(#0357F7, .7);
-            }
-          }
-        }
-        &.reserved {
-          h3 {
-            &:before {
-              border-color: #814AFF;
-              box-shadow: 0 3px 10px rgba(#0357F7, .7);
-            }
-          }
-        }
-        &.online {
-          h3 {
-            &:before {
-              border-color: #66E8CD;
-              box-shadow: 0 3px 10px rgba(#66E8CD, .7);
-            }
-          }
-        }
-        &.offline {
-          h3 {
-            &:before {
-              border-color: #FFFFFF;
-              box-shadow: 0 3px 6px rgba(#FFFFFF, .7);
-            }
-          }
-        }
+      &.cash_register h3:before {
+        border-color: #FC93B1;
+        box-shadow: 0 3px 10px rgba(#FC93B1, .7);
+      }
+      &.invitations h3:before {
+        border-color: #26BCFF;
+        box-shadow: 0 3px 10px rgba(#0357F7, .7);
+      }
+      &.reserved h3:before {
+        border-color: #814AFF;
+        box-shadow: 0 3px 10px rgba(#0357F7, .7);
+      }
+      &.online h3:before {
+        border-color: #66E8CD;
+        box-shadow: 0 3px 10px rgba(#66E8CD, .7);
+      }
+      &.offline h3:before {
+        border-color: #FFFFFF;
+        box-shadow: 0 3px 6px rgba(#FFFFFF, .7);
+      }
+      &.returned h3:before {
+        border-color: #FF9D52;
+        box-shadow: 0 3px 10px rgba(#FF9D52, .6);
       }
     }
     &--general {
-      display: block;
-      overflow: auto;
-      white-space: nowrap;
-      ul {
-        display: inline-block;
-        white-space: nowrap;
-        padding-left: 25px;
-        &:last-child {
-          margin-left: 10px;
-          li {
-            text-align: left;
-            h3 {
-              &:before {
-                right: 100%;
-                left: auto;
-                margin-right: 8px;
-                margin-left: 0;
-              }
-            }
-          }
-        }
-        li {
-          display: inline-block;
-          margin-left: 35px;
-          &:first-child {
-            margin-left: 0;
-          }
-        }
-      }
+      max-width: 520px;
     }
   }
   .panel {
