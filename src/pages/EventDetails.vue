@@ -1026,7 +1026,7 @@ export default {
           transform: translate(0, -50%) rotate(180deg);
         }
         & + .panel__content {
-          max-height: 240px;
+          max-height: 1000px;
         }
       }
     }
