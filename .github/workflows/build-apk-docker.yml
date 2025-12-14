@@ -39,8 +39,8 @@ jobs:
           # Install dependencies (EXACTLY like local Docker that works!)
           RUN npm install --ignore-scripts && rm -rf node_modules/node-sass
           
-          # Install src-cordova deps
-          RUN cd src-cordova && npm install && cd ..
+          # Install src-cordova deps (also with --ignore-scripts)
+          RUN cd src-cordova && npm install --ignore-scripts && cd ..
           
           # Build command
           CMD ["sh", "-c", "npx quasar build"]
@@ -147,8 +147,8 @@ jobs:
           # Install dependencies (EXACTLY like local Docker that works!)
           RUN npm install --ignore-scripts && rm -rf node_modules/node-sass
           
-          # Install src-cordova deps
-          RUN cd src-cordova && npm install && cd ..
+          # Install src-cordova deps (also with --ignore-scripts)
+          RUN cd src-cordova && npm install --ignore-scripts && cd ..
           
           # Build command
           CMD ["sh", "-c", "npx quasar build"]

@@ -44,8 +44,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          # NUCLEAR OPTION: Install with --ignore-scripts, then forcefully replace node-sass
-          npm install --legacy-peer-deps --ignore-scripts
+          # Set ignore-scripts globally to prevent node-sass from building
+          npm config set ignore-scripts true
+          
+          # Install main dependencies
+          npm install --legacy-peer-deps
           npm install -g cordova@10.0.0
           
           # Forcefully remove node-sass and install sass
@@ -68,10 +71,13 @@ jobs:
           
           echo "✓ node-sass redirected to sass"
           
-          # Install src-cordova dependencies
+          # Install src-cordova dependencies (ignore-scripts is already set globally)
           cd src-cordova
           npm install
           cd ..
+          
+          # Reset npm config to default
+          npm config delete ignore-scripts
 
       - name: Create config files and patch Quasar
         run: |
@@ -184,8 +190,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          # NUCLEAR OPTION: Install with --ignore-scripts, then forcefully replace node-sass
-          npm install --legacy-peer-deps --ignore-scripts
+          # Set ignore-scripts globally to prevent node-sass from building
+          npm config set ignore-scripts true
+          
+          # Install main dependencies
+          npm install --legacy-peer-deps
           npm install -g cordova@10.0.0
           
           # Forcefully remove node-sass and install sass
@@ -208,10 +217,13 @@ jobs:
           
           echo "✓ node-sass redirected to sass"
           
-          # Install src-cordova dependencies
+          # Install src-cordova dependencies (ignore-scripts is already set globally)
           cd src-cordova
           npm install
           cd ..
+          
+          # Reset npm config to default
+          npm config delete ignore-scripts
 
       - name: Create config files and patch Quasar
         run: |

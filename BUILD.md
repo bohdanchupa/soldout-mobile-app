@@ -268,6 +268,33 @@ rm -rf src-cordova/platforms src-cordova/plugins src-cordova/www
 npx quasar build -m cordova -T android
 ```
 
+### GitHub Actions: node-sass build failures
+
+**Проблема**: GitHub Actions падає з помилкою `node-gyp rebuild` при встановленні node-sass
+
+**Причина**: 
+- Навіть з `--ignore-scripts`, npm може спробувати зібрати node-sass при встановленні залежностей Cordova
+- node-sass потребує Python 2.x, якого може не бути в GitHub runner
+
+**Рішення**: 
+1. Використовуйте `npm config set ignore-scripts true` глобально перед всіма `npm install`
+2. Або додавайте `--ignore-scripts` до ВСІХ команд `npm install`, включно з `cd src-cordova && npm install --ignore-scripts`
+3. Переконайтеся що фейковий node-sass модуль створюється після установки залежностей
+
+**Приклад (вже реалізовано в `.github/workflows/build-apk.yml`)**:
+```bash
+# Set globally
+npm config set ignore-scripts true
+
+# Install dependencies
+npm install --legacy-peer-deps
+cd src-cordova && npm install
+cd ..
+
+# Reset config
+npm config delete ignore-scripts
+```
+
 ---
 
 ## API Configuration
