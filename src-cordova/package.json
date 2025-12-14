@@ -17,22 +17,13 @@
     "cordova-browser": "^6.0.0"
   },
   "cordova": {
-    "plugins": {
-      "cordova-plugin-http": {},
-      "cordova-plugin-file": {},
-      "cordova-plugin-advanced-http": {
-        "ANDROIDBLACKLISTSECURESOCKETPROTOCOLS": "SSLv3,TLSv1"
-      }
-    },
+    "plugins": {},
     "platforms": [
       "android",
       "browser"
     ]
   },
   "devDependencies": {
-    "cordova-ios": "^6.3.0",
-    "cordova-plugin-advanced-http": "github:silkimen/cordova-plugin-advanced-http",
-    "cordova-plugin-file": "github:apache/cordova-plugin-file",
-    "cordova-plugin-http": "^1.2.0"
+    "cordova-ios": "^6.3.0"
   }
 }
